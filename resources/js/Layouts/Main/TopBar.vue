@@ -7,10 +7,7 @@
         @select="handleSelect"
     >
         <el-menu-item index="0">
-            <img
-                src="http://backend-website.test/assets/images/logo-dark.png"
-                class="logo"
-            />
+            <img src="/assets/image/logo-white.jpg" class="logo" />
         </el-menu-item>
         <div class="flex-grow" />
         <el-dropdown trigger="click">
@@ -33,10 +30,7 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import {
-    Plus,
-    CirclePlusFilled
-} from "@element-plus/icons-vue";
+import { Plus, CirclePlusFilled } from "@element-plus/icons-vue";
 
 const activeIndex = ref("1");
 const handleSelect = (key: string, keyPath: string[]) => {

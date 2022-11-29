@@ -29,14 +29,16 @@ class CategoryController extends Controller
         $theCategories = [];
         foreach ($categories as $category) {
             $theCategories[$category->id] = [
-                'label'     => $category->name,
-                'id'        => $category->id,
+                'label'         => $category->name,
+                'id'            => $category->id,
+                'description'   => $category->description
             ];
             if ($category->children) {
                 foreach ($category->children as $child) {
                     $theCategories[$category->id]['children'][] = [
                         'label' => $child->name,
                         'id'    => $child->id,
+                        'description'   => $category->description,
                         'children' => $this->childCategory($child)
                     ];
                 }
@@ -52,6 +54,7 @@ class CategoryController extends Controller
                 $subCategories[] = [
                     'label' => $child->name,
                     'id'    => $child->id,
+                    'description'   => $category->description,
                     'children' => $this->childCategory($child)
                 ];
                 Self::childCategory($child);
@@ -110,7 +113,7 @@ class CategoryController extends Controller
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', __('app.created_fail'));;
         }
-        return redirect()->intended('categories');
+        return redirect()->route('category.index');
     }
 
     /**

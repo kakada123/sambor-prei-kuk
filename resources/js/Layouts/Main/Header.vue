@@ -1,10 +1,7 @@
 <template>
     <el-row class="top_header">
         <el-aside width="250px" class="logo">
-            <img
-                src="https://backend-website.test/assets/images/logo-dark.png"
-                class="logo_header"
-            />
+            <img src="/assets/image/logo-white.jpg" class="logo_header" />
         </el-aside>
         <el-container>
             <el-main class="user-side">

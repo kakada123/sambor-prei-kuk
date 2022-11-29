@@ -11,7 +11,7 @@ import contextmenu from "v-contextmenu";
 import "v-contextmenu/dist/themes/default.css";
 import "element-plus/dist/index.css";
 import FloatingLabel from "vue-simple-floating-labels";
-
+import store from "@/Store/index.js";
 const appName =
     window.document.getElementsByTagName("title")[0]?.innerText || "Laravel";
 const cleanApp = () => {
@@ -33,6 +33,7 @@ createInertiaApp({
             .use(ElementPlus)
             .mixin({ methods: { appRoute: window.route } })
             .use(FloatingLabel)
+            .use(store)
             .use(i18nVue, {
                 lang: "pt",
                 resolve: (lang) => {

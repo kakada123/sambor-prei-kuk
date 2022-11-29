@@ -42,6 +42,13 @@
                 @click="submitForm(categoryForm)"
                 >Save</el-button
             >
+            <el-button
+                type="danger"
+                plain
+                class="me-2"
+                @click="deleteCategory()"
+                >Delete</el-button
+            >
         </el-row>
     </el-tabs>
 </template>
@@ -54,7 +61,10 @@ import { usePage, useForm } from "@inertiajs/inertia-vue3";
 const langs = computed(() => usePage().props.value.langs);
 const defaultLang = "en";
 const activeName = ref(defaultLang);
-
+import { Inertia } from "@inertiajs/inertia";
+import { useStore } from "vuex";
+const store = useStore();
+const parent = computed(() => store.getters["category/parent"]);
 const handleClick = (tab: TabsPaneContext, event: Event) => {
     console.log(tab, event);
 };
@@ -63,7 +73,7 @@ const labelPosition = ref("top");
 
 let formObject = {
     is_active: true,
-    parent: 4,
+    parent: parent,
 };
 langs.value.forEach((lang) => {
     let name = "name_" + lang.locale;
@@ -93,7 +103,9 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     if (!formEl) return;
     await formEl.validate((valid, fields) => {
         if (valid) {
-            form.post(route("category.store"));
+            form.post(route("category.store"), {
+                onFinish: () => Inertia.reload({ only: ["categories"] }),
+            });
         } else {
             console.log("error submit!", fields);
         }
@@ -106,6 +118,9 @@ const IsRequired = (active: string) => {
         return true;
     }
     return false;
+};
+const deleteCategory = () => {
+    console.log("delete");
 };
 </script>
 <style>

@@ -3,7 +3,7 @@ export default {
     data() {
         return {
             categoryTreeKey: 1,
-            isExpandAll: true,
+            isExpandAll: false,
         };
     },
     methods: {
@@ -18,6 +18,17 @@ export default {
         createMainCategory() {
             alert("create main category");
         },
+        categoryClick(Tree) {
+            let category = {
+                id: Tree.id,
+                name: Tree.label,
+                description: Tree.description,
+            };
+            this.$store.dispatch({
+                type: "category/clickOnCategory",
+                category: category,
+            });
+        },
     },
     computed: {
         expanded() {
@@ -25,6 +36,9 @@ export default {
                 return true;
             }
             return false;
+        },
+        category() {
+            return this.$store.getters["category/category"];
         },
     },
 };
@@ -38,9 +52,6 @@ interface Tree {
     id: number;
 }
 let categoryId = null;
-const categoryClick = (tree: Tree) => {
-    categoryId = tree.id;
-};
 const props = defineProps(["categories"]);
 const dataTree: Tree[] = props.categories;
 </script>
