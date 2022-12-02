@@ -3,7 +3,7 @@ export default {
     data() {
         return {
             categoryTreeKey: 1,
-            isExpandAll: true,
+            isExpandAll: false,
             categoryId: null,
         };
     },
@@ -90,6 +90,7 @@ const dataTree: Tree[] = props.categories;
         @node-click="categoryClick"
         :default-expand-all="isExpandAll"
         :key="categoryTreeKey"
-        :current-node-key="6"
+        node-key="id"
+        :default-expanded-keys="[27]"
     />
 </template>
