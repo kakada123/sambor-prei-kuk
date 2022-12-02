@@ -3,7 +3,8 @@ export default {
     data() {
         return {
             categoryTreeKey: 1,
-            isExpandAll: false,
+            isExpandAll: true,
+            categoryId: null,
         };
     },
     methods: {
@@ -19,6 +20,7 @@ export default {
             alert("create main category");
         },
         categoryClick(Tree) {
+            this.categoryId = Tree.id;
             let category = {
                 id: Tree.id,
                 name: Tree.label,
@@ -28,6 +30,21 @@ export default {
                 type: "category/clickOnCategory",
                 category: category,
             });
+        },
+        CreateRootCategory() {
+            this.$store.dispatch({
+                type: "category/clickOnCategory",
+                category: {
+                    id: null,
+                    name: null,
+                    description: null,
+                },
+            });
+            Inertia.visit(route("category.create"), { method: "get" });
+        },
+        CreateSubCategory() {
+            this.categoryId = this.$store.getters["category/parent"];
+            Inertia.visit(route("category.create"), { method: "get" });
         },
     },
     computed: {
@@ -46,12 +63,12 @@ export default {
 <script lang="ts" setup>
 import { Fold, Expand, CirclePlus } from "@element-plus/icons-vue";
 import CreateCategoryVue from "./CreateCategory.vue";
+import { Inertia } from "@inertiajs/inertia";
 interface Tree {
     label: string;
     children?: Tree[];
     id: number;
 }
-let categoryId = null;
 const props = defineProps(["categories"]);
 const dataTree: Tree[] = props.categories;
 </script>
@@ -63,8 +80,9 @@ const dataTree: Tree[] = props.categories;
         <el-button @click="expandAll" v-if="!expanded">
             <el-icon><Expand /></el-icon>
         </el-button>
-        <el-button>
-            <el-icon><CirclePlus /></el-icon>
+        <el-button @click="CreateRootCategory"> Root </el-button>
+        <el-button @click="CreateSubCategory" v-if="categoryId">
+            Sub
         </el-button>
     </div>
     <el-tree
@@ -72,5 +90,6 @@ const dataTree: Tree[] = props.categories;
         @node-click="categoryClick"
         :default-expand-all="isExpandAll"
         :key="categoryTreeKey"
+        :current-node-key="6"
     />
 </template>

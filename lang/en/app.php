@@ -13,4 +13,5 @@ return [
     'name_km' => 'Name Khmer',
     'description_en' => 'Description English',
     'description_km' => 'Description Khmer',
+    'parent' => 'Parent'
 ];
