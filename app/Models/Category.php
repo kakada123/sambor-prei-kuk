@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
 
 class Category extends Model
@@ -17,6 +18,7 @@ class Category extends Model
         'type',
         'is_new'
     ];
+    use SoftDeletes;
     function content()
     {
         $lang = Language::byLocale(App::getLocale())->first();

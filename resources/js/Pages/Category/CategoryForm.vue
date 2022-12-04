@@ -47,15 +47,15 @@
                 plain
                 class="me-2"
                 @click="submitForm(categoryForm)"
-                >Save</el-button
+                >{{ $t("app.save") }}</el-button
             >
             <el-button
                 type="danger"
                 plain
                 class="me-2"
-                v-if="parent != null"
+                v-if="categoryId != null"
                 @click="deleteCategory()"
-                >Delete</el-button
+                >{{ $t("app.delete") }}</el-button
             >
         </el-row>
     </el-tabs>
@@ -69,11 +69,13 @@ import { usePage, useForm } from "@inertiajs/inertia-vue3";
 import { Inertia } from "@inertiajs/inertia";
 import { useStore } from "vuex";
 import { ElNotification } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { trans } from "laravel-vue-i18n";
 const langs = computed(() => usePage().props.value.langs);
 const defaultLang = "en";
 const activeName = ref(defaultLang);
 const store = useStore();
-const parent = computed(() => store.getters["category/parent"]);
+const categoryId = computed(() => store.getters["category/parent"]);
 const parentName = computed(() => store.getters["category/categoryName"]);
 const handleClick = (tab: TabsPaneContext, event: Event) => {
     console.log(tab, event);
@@ -83,7 +85,7 @@ const labelPosition = ref("top");
 
 let formObject = {
     is_active: true,
-    parent: parent,
+    parent: categoryId.value,
     parentName: parentName,
 };
 langs.value.forEach((lang) => {
@@ -93,29 +95,29 @@ langs.value.forEach((lang) => {
     formObject[description] = "";
 });
 const form = useForm(formObject);
+const requiredMessage = trans("app.please_input_category_name");
 const rules = reactive<FormRules>({
     name_en: [
         {
             required: true,
-            message: "Please input category name",
+            message: requiredMessage,
             trigger: "blur",
         },
     ],
     name_km: [
         {
             required: true,
-            message: "Please input category name",
+            message: requiredMessage,
             trigger: "blur",
         },
     ],
 });
 const successSubmit = () => {
     ElNotification({
-        title: "Success",
-        message: "This is a success message",
+        title: trans("app.success"),
+        message: trans("app.create_category_success"),
         type: "success",
     });
-    Inertia.reload();
 };
 const submitForm = async (formEl: FormInstance | undefined) => {
     if (!formEl) return;
@@ -138,7 +140,26 @@ const IsRequired = (active: string) => {
     return false;
 };
 const deleteCategory = () => {
-    console.log("delete");
+    ElMessageBox.confirm(trans("app.confirm_delete_message"), "Warning", {
+        confirmButtonText: "OK",
+        cancelButtonText: "Cancel",
+        type: "warning",
+    })
+        .then(() => {
+            Inertia.visit(
+                route("category.destroy", { category: categoryId.value })
+            );
+            ElMessage({
+                type: "success",
+                message: "Delete completed",
+            });
+        })
+        .catch(() => {
+            ElMessage({
+                type: "info",
+                message: "Delete canceled",
+            });
+        });
 };
 </script>
 <style>

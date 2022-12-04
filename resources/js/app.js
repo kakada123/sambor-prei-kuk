@@ -7,6 +7,7 @@ import { InertiaProgress } from "@inertiajs/progress";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import ElementPlus from "element-plus";
 import { i18nVue } from "laravel-vue-i18n";
+import { trans } from "laravel-vue-i18n";
 import contextmenu from "v-contextmenu";
 import "v-contextmenu/dist/themes/default.css";
 import "element-plus/dist/index.css";

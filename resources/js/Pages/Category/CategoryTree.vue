@@ -76,14 +76,11 @@ export default {
             alert("create main category");
         },
         categoryClick(Tree) {
-            this.expandedId = null;
-            Inertia.visit(route("category.edit"), {
-                method: "get",
-                data: {
-                    category_id: this.categoryId,
-                },
-            });
             this.categoryId = Tree.id;
+            this.expandedId = null;
+            Inertia.visit(
+                route("category.edit", { category: this.categoryId })
+            );
             let category = {
                 id: Tree.id,
                 name: Tree.label,

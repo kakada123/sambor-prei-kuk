@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\CategoryContent;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -133,9 +134,8 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request)
+    public function edit(Category $category)
     {
-        $category = Category::find($request->category_id);
         return Inertia::render('Category/EditCategory', [
             'category' => $category,
             'categories' => $this->getCategory()
@@ -162,6 +162,9 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $category->deleted_by = Auth::user()->id;
+        $category->save();
+        $category->delete();
+        return redirect()->route('category.index');
     }
 }

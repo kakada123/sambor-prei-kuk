@@ -9,7 +9,7 @@ Route::controller(CategoryController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('create', 'create')->name('create');
         Route::post('/store', 'store')->name('store');
-        Route::get('edit', 'edit')->name('edit');
+        Route::get('edit/{category}', 'edit')->name('edit');
         Route::post('update/{category}', 'update')->name('update');
         Route::get('destroy/{category}', 'destroy')->name('destroy');
         Route::get('show/{category}', 'show')->name('show');
