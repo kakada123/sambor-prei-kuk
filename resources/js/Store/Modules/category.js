@@ -5,6 +5,7 @@ export default {
             id: null,
             name: null,
             description: null,
+            categories: [],
         };
     },
     mutations: {
@@ -14,10 +15,16 @@ export default {
             state.name = categoryData.name;
             state.description = categoryData.description;
         },
+        saveCategories(state, payLoad) {
+            state.categories = payLoad.categories;
+        },
     },
     actions: {
         clickOnCategory(context, payLoad) {
             context.commit("clickOnCategory", payLoad);
+        },
+        saveCategories(context, payLoad) {
+            context.commit("saveCategories", payLoad);
         },
     },
     getters: {
@@ -26,6 +33,9 @@ export default {
         },
         categoryName(state) {
             return state.name;
+        },
+        categories(state) {
+            return state.categories;
         },
     },
 };

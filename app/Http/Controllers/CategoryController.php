@@ -133,9 +133,13 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function edit(Category $category)
+    public function edit(Request $request)
     {
-        //
+        $category = Category::find($request->category_id);
+        return Inertia::render('Category/EditCategory', [
+            'category' => $category,
+            'categories' => $this->getCategory()
+        ]);
     }
 
     /**

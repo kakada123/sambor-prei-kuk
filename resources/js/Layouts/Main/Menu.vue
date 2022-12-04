@@ -8,7 +8,7 @@ import {
     ArrowRight,
 } from "@element-plus/icons-vue";
 import { Link } from '@inertiajs/inertia-vue3';
-const active = "1";
+const active = route().current();
 </script>
 <template>
     <el-row class="tac the_menu">
@@ -23,7 +23,7 @@ const active = "1";
                 :unique-opened="true"
             >
             <Link :href="appRoute('dashboard')">
-                <el-menu-item index="1">
+                <el-menu-item index="dashboard">
                     <template #title>
                         <el-icon><HomeFilled /></el-icon>
                         <span>{{ $t("app.Home") }}</span>
@@ -31,7 +31,7 @@ const active = "1";
                 </el-menu-item>
             </link>
                 <Link :href="appRoute('category.index')">
-                    <el-menu-item index="2">
+                    <el-menu-item index="category.index">
                         <el-icon><box /></el-icon>
                         <span>{{ $t("app.Categories") }}</span>
                     </el-menu-item>

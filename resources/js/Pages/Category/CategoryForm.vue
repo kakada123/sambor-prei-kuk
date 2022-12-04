@@ -1,5 +1,9 @@
 <template>
-    <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+    <el-tabs
+        v-model="activeName"
+        class="category-tabs"
+        @tab-click="handleClick"
+    >
         <el-form
             :model="form"
             :label-position="labelPosition"
@@ -49,6 +53,7 @@
                 type="danger"
                 plain
                 class="me-2"
+                v-if="parent != null"
                 @click="deleteCategory()"
                 >Delete</el-button
             >
@@ -104,18 +109,20 @@ const rules = reactive<FormRules>({
         },
     ],
 });
-
+const successSubmit = () => {
+    ElNotification({
+        title: "Success",
+        message: "This is a success message",
+        type: "success",
+    });
+    Inertia.reload();
+};
 const submitForm = async (formEl: FormInstance | undefined) => {
     if (!formEl) return;
     await formEl.validate((valid, fields) => {
         if (valid) {
             form.post(route("category.store"), {
-                onFinish: () =>
-                    ElNotification({
-                        title: "Success",
-                        message: "This is a success message",
-                        type: "success",
-                    }),
+                onFinish: successSubmit(),
             });
         } else {
             console.log("error submit!", fields);
@@ -135,7 +142,7 @@ const deleteCategory = () => {
 };
 </script>
 <style>
-.demo-tabs > .el-tabs__content {
+.category-tabs > .el-tabs__content {
     color: #6b778c;
     font-size: 32px;
     font-weight: 600;
