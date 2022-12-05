@@ -1,6 +1,6 @@
 <template>
     <div>
-        <CategoryForm></CategoryForm>
+        <CategoryForm :category="category"></CategoryForm>
     </div>
 </template>
 <script setup>
@@ -9,6 +9,7 @@ import CategoryForm from "./CategoryForm.vue";
 import Master from "@/Layouts/Main/Master.vue";
 defineProps({
     categories: Object,
+    category: Object,
 });
 </script>
 <script>

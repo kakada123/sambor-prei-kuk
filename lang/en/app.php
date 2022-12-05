@@ -20,5 +20,6 @@ return [
     'confirm_delete_message' => 'Are you sure, you want to delete it?',
     'please_input_category_name' => 'Please input the category name.',
     'success' => 'Success',
-    'create_category_success' => 'The category was created successfully'
+    'create_category_success' => 'The category was created.',
+    'update_category_success' => 'The category was updated.',
 ];

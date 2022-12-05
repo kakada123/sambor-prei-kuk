@@ -90,7 +90,8 @@ class CategoryController extends Controller
                 $category = Category::create([
                     'parent_id' => $request->parent ?? null,
                     'status'    => $request->is_active ?? null,
-                    'slug' => $slug
+                    'slug' => $slug,
+                    'created_by' => Auth::user()->id ?? null
                 ]);
                 if ($slug === "") {
                     $category->slug = 'category-' . $category->id;
@@ -136,8 +137,26 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
+        $theCategory = [
+            'category_id'   => $category->id,
+            'is_active'     => $category->status ? true : false,
+            'parent'        => $category->id,
+            'parent_name'   => $category->name
+        ];
+        $langs = langs();
+        foreach ($langs as $lang) {
+            $categoryContent = CategoryContent::where([
+                'category_id' => $category->id,
+                'lang_id' => $lang->id
+            ])->first();
+            $locale = $lang->locale;
+            $name = "name_" . $locale;
+            $description = "description_" . $locale;
+            $theCategory[$name] = $categoryContent->name ?? "";
+            $theCategory[$description] = $categoryContent->description ?? "";
+        }
         return Inertia::render('Category/EditCategory', [
-            'category' => $category,
+            'category' => (object)$theCategory,
             'categories' => $this->getCategory()
         ]);
     }
@@ -151,7 +170,42 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        //
+        try {
+            DB::transaction(function () use ($request, $category) {
+                // Category
+                $slug = Str::slug($request->name_en ?? "");
+                $category->update([
+                    'status'    => $request->is_active ?? null,
+                    'slug' => $slug,
+                    'updated_by' => Auth::user()->id ?? null
+                ]);
+                if ($slug === "") {
+                    $category->slug = 'category-' . $category->id;
+                    $category->save();
+                }
+                $langs = langs();
+                foreach ($langs as $lang) {
+                    $locale = $lang->locale;
+                    $name = 'name_' . $locale;
+                    $description = 'description_' . $locale;
+                    if ($request->$name or $request->$description) {
+                        $matchThese = [
+                            'category_id' => $category->id ?? null,
+                            'lang_id' => $lang->id,
+                        ];
+                        CategoryContent::updateOrCreate($matchThese, [
+                            'category_id' => $category->id ?? null,
+                            'lang_id' => $lang->id,
+                            'name'    => $request->$name ?? "",
+                            'description'   => $request->$description ?? ""
+                        ]);
+                    }
+                }
+            });
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', __('app.updated_fail'));;
+        }
+        return redirect()->route('category.index');
     }
 
     /**

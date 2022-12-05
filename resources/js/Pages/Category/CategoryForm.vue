@@ -12,7 +12,10 @@
             label-width="120px"
             require-asterisk-position="right"
         >
-            <el-form-item :label="$t('app.parent')" v-if="parentName">
+            <el-form-item
+                :label="$t('app.parent')"
+                v-if="isCreateForm && parentName"
+            >
                 <el-input v-model="parentName" :disabled="true" />
             </el-form-item>
             <div v-for="lang in langs">
@@ -43,11 +46,20 @@
                 class="mr-2"
             />
             <el-button
+                v-if="isCreateForm"
                 type="success"
                 plain
                 class="me-2"
                 @click="submitForm(categoryForm)"
                 >{{ $t("app.save") }}</el-button
+            >
+            <el-button
+                v-if="isUpdateForm"
+                type="success"
+                plain
+                class="me-2"
+                @click="updateForm(categoryForm)"
+                >{{ $t("app.update") }}</el-button
             >
             <el-button
                 type="danger"
@@ -71,7 +83,9 @@ import { useStore } from "vuex";
 import { ElNotification } from "element-plus";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { trans } from "laravel-vue-i18n";
+const currentRoute = route().current();
 const langs = computed(() => usePage().props.value.langs);
+const category = computed(() => usePage().props.value.category);
 const defaultLang = "en";
 const activeName = ref(defaultLang);
 const store = useStore();
@@ -80,13 +94,11 @@ const parentName = computed(() => store.getters["category/categoryName"]);
 const handleClick = (tab: TabsPaneContext, event: Event) => {
     console.log(tab, event);
 };
-
 const labelPosition = ref("top");
-
 let formObject = {
     is_active: true,
     parent: categoryId.value,
-    parentName: parentName,
+    parentName: parentName.value,
 };
 langs.value.forEach((lang) => {
     let name = "name_" + lang.locale;
@@ -94,6 +106,21 @@ langs.value.forEach((lang) => {
     formObject[name] = "";
     formObject[description] = "";
 });
+const isUpdateForm = computed(() => {
+    if (currentRoute === "category.edit") {
+        return true;
+    }
+    return false;
+});
+const isCreateForm = computed(() => {
+    if (currentRoute === "category.create") {
+        return true;
+    }
+    return false;
+});
+if (isUpdateForm.value) {
+    formObject = useForm(category.value);
+}
 const form = useForm(formObject);
 const requiredMessage = trans("app.please_input_category_name");
 const rules = reactive<FormRules>({
@@ -126,6 +153,30 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             form.post(route("category.store"), {
                 onFinish: successSubmit(),
             });
+        } else {
+            console.log("error submit!", fields);
+        }
+    });
+};
+const successUpdate = () => {
+    ElNotification({
+        title: trans("app.success"),
+        message: trans("app.update_category_success"),
+        type: "success",
+    });
+};
+const updateForm = async (formEl: FormInstance | undefined) => {
+    if (!formEl) return;
+    await formEl.validate((valid, fields) => {
+        if (valid) {
+            form.post(
+                route("category.update", {
+                    category: category.value.category_id,
+                }),
+                {
+                    onFinish: successUpdate(),
+                }
+            );
         } else {
             console.log("error submit!", fields);
         }
