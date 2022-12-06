@@ -20,8 +20,8 @@
                     <el-button @click="expandAll" v-if="!expanded">
                         <el-icon><Expand /></el-icon>
                     </el-button>
-                    <el-button @click="CreateRootCategory"> Root </el-button>
-                    <el-button @click="CreateSubCategory" v-if="categoryId">
+                    <el-button @click="createRootCategory"> Root </el-button>
+                    <el-button @click="createSubCategory" v-if="categoryId">
                         Sub
                     </el-button>
                 </div>
@@ -91,7 +91,7 @@ export default {
                 category: category,
             });
         },
-        CreateRootCategory() {
+        createRootCategory() {
             this.collapseAll();
             this.categoryId = null;
             this.$store.dispatch({
@@ -107,7 +107,7 @@ export default {
         createTheCategory() {
             Inertia.visit(route("category.create"), { method: "get" });
         },
-        CreateSubCategory() {
+        createSubCategory() {
             this.categoryId = this.$store.getters["category/parent"];
             this.createTheCategory();
         },

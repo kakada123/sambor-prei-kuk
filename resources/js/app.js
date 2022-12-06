@@ -13,6 +13,7 @@ import "v-contextmenu/dist/themes/default.css";
 import "element-plus/dist/index.css";
 import FloatingLabel from "vue-simple-floating-labels";
 import store from "@/Store/index.js";
+import Master from "@/Layouts/Main/Master.vue";
 const appName =
     window.document.getElementsByTagName("title")[0]?.innerText || "Laravel";
 const cleanApp = () => {
@@ -23,11 +24,16 @@ document.addEventListener("inertia:finish", cleanApp);
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
-    resolve: (name) =>
-        resolvePageComponent(
+    resolve: (name) => {
+        const page = resolvePageComponent(
             `./Pages/${name}.vue`,
             import.meta.glob("./Pages/**/*.vue")
-        ),
+        );
+        page.then((module) => {
+            module.default.layout = module.default.layout || Master;
+        });
+        return page;
+    },
     setup({ el, app, props, plugin }) {
         return createApp({ render: () => h(app, props) })
             .use(plugin)

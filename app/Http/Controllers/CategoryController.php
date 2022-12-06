@@ -32,6 +32,7 @@ class CategoryController extends Controller
             $theCategories[$category->id] = [
                 'label'         => $category->name,
                 'id'            => $category->id,
+                'value'         => $category->id,
                 'description'   => $category->description
             ];
             if ($category->children) {
@@ -39,6 +40,7 @@ class CategoryController extends Controller
                     $theCategories[$category->id]['children'][] = [
                         'label' => $child->name,
                         'id'    => $child->id,
+                        'value'    => $child->id,
                         'description'   => $category->description,
                         'children' => $this->childCategory($child)
                     ];
@@ -55,6 +57,7 @@ class CategoryController extends Controller
                 $subCategories[] = [
                     'label' => $child->name,
                     'id'    => $child->id,
+                    'value'    => $child->id,
                     'description'   => $category->description,
                     'children' => $this->childCategory($child)
                 ];

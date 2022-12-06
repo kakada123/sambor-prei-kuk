@@ -13,6 +13,21 @@
             require-asterisk-position="right"
         >
             <el-form-item
+                :label="$t('app.select_category')"
+                :required="true"
+                :prop="category"
+            >
+                <el-tree-select
+                    v-model="form.category"
+                    :data="categories"
+                    :filter-method="filterMethod"
+                    filterable
+                    check-strictly
+                    :render-after-expand="false"
+                    class="w-full"
+                />
+            </el-form-item>
+            <el-form-item
                 :label="$t('app.parent')"
                 v-if="isCreateForm && parentName"
             >
@@ -45,30 +60,9 @@
                 inactive-text="InActive"
                 class="mr-2"
             />
-            <el-button
-                v-if="isCreateForm"
-                type="success"
-                plain
-                class="me-2"
-                @click="submitForm(categoryForm)"
-                >{{ $t("app.save") }}</el-button
-            >
-            <el-button
-                v-if="isUpdateForm"
-                type="success"
-                plain
-                class="me-2"
-                @click="updateForm(categoryForm)"
-                >{{ $t("app.update") }}</el-button
-            >
-            <el-button
-                type="danger"
-                plain
-                class="me-2"
-                v-if="categoryId != null"
-                @click="deleteCategory()"
-                >{{ $t("app.delete") }}</el-button
-            >
+            <el-button type="success" plain class="me-2">{{
+                $t("app.save")
+            }}</el-button>
         </el-row>
     </el-tabs>
 </template>
@@ -88,7 +82,16 @@ const langs = computed(() => usePage().props.value.langs);
 const category = computed(() => usePage().props.value.category);
 const categoryId = computed(() => store.getters["category/parent"]);
 const parentName = computed(() => store.getters["category/categoryName"]);
+defineProps({
+    categories: Object,
+});
 // Data
+const categories = usePage().props.value.categories;
+const data = ref(categories);
+
+const filterMethod = (value) => {
+    data.value = [...categories].filter((item) => item.label.includes(value));
+};
 const defaultLang = "en";
 const activeName = ref(defaultLang);
 const store = useStore();
@@ -96,9 +99,8 @@ const currentRoute = route().current();
 const labelPosition = ref("top");
 const categoryForm = ref<FormInstance>();
 let formObject = {
+    category: null,
     is_active: true,
-    parent: categoryId.value,
-    parentName: parentName.value,
 };
 langs.value.forEach((lang) => {
     let name = "name_" + lang.locale;
@@ -126,8 +128,15 @@ if (isUpdateForm.value) {
     formObject = useForm(category.value);
 }
 const form = useForm(formObject);
-const requiredMessage = trans("app.please_input_category_name");
+const requiredMessage = trans("app.please_input_article_name");
 const rules = reactive<FormRules>({
+    category: [
+        {
+            required: true,
+            message: trans("app.please_select_category"),
+            trigger: "blur",
+        },
+    ],
     name_en: [
         {
             required: true,

@@ -22,4 +22,6 @@ return [
     'success' => 'Success',
     'create_category_success' => 'The category was created.',
     'update_category_success' => 'The category was updated.',
+    'select_category' => 'Select Category',
+    'please_input_article_name' => 'Please select category.'
 ];

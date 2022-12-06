@@ -30,5 +30,6 @@ Route::get('/dashboard', function () {
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
     require __DIR__ . '/category.php';
+    require __DIR__ . '/article.php';
 });
 require __DIR__ . '/auth.php';
