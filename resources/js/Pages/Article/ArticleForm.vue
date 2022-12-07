@@ -42,18 +42,28 @@
                     >
                         <el-input v-model="form['name_' + lang.locale]" />
                     </el-form-item>
-                    <el-form-item :label="$t('app.description_' + lang.locale)">
-                        <el-input
-                            :rows="2"
-                            required
-                            type="textarea"
-                            v-model="form['description_' + lang.locale]"
+                    <el-form-item :label="$t('app.content_' + lang.locale)">
+                        <editor
+                            :id="'content_' + lang.locale"
+                            v-model="form['content_' + lang.locale]"
+                            api-key="x619dz9pzucdv88t6igpqjx22aaalqx2z9znr1y6tzlof0bp"
+                            :init="{
+                                plugins:
+                                    'lists link image table code help wordcount fullscreen',
+                                min_height: 500,
+                                width: '100%',
+                                toolbar:
+                                    'redo undo image align code fullscreen',
+                                image_title: true,
+                                automatic_uploads: true,
+                                images_upload_url: '/articles/upload-image',
+                            }"
                         />
                     </el-form-item>
                 </el-tab-pane>
             </div>
         </el-form>
-        <el-row>
+        <el-row class="justify-end">
             <el-switch
                 v-model="form.is_active"
                 active-text="Active"
@@ -67,7 +77,9 @@
     </el-tabs>
 </template>
 <script lang="ts" setup>
+import Editor from "@tinymce/tinymce-vue";
 import { ref, reactive } from "vue";
+import React from "react";
 import type { TabsPaneContext } from "element-plus";
 import type { FormInstance, FormRules } from "element-plus";
 import { computed } from "vue";
@@ -105,8 +117,10 @@ let formObject = {
 langs.value.forEach((lang) => {
     let name = "name_" + lang.locale;
     let description = "description_" + lang.locale;
+    let content = "content_" + lang.locale;
     formObject[name] = "";
     formObject[description] = "";
+    formObject[content] = "";
 });
 // Method
 const handleClick = (tab: TabsPaneContext, event: Event) => {
@@ -200,27 +214,5 @@ const IsRequired = (active: string) => {
         return true;
     }
     return false;
-};
-const deleteCategory = () => {
-    ElMessageBox.confirm(trans("app.confirm_delete_message"), "Warning", {
-        confirmButtonText: "OK",
-        cancelButtonText: "Cancel",
-        type: "warning",
-    })
-        .then(() => {
-            Inertia.visit(
-                route("category.destroy", { category: categoryId.value })
-            );
-            ElMessage({
-                type: "success",
-                message: "Delete completed",
-            });
-        })
-        .catch(() => {
-            ElMessage({
-                type: "info",
-                message: "Delete canceled",
-            });
-        });
 };
 </script>

@@ -86,4 +86,14 @@ class ArticleController extends Controller
     {
         //
     }
+    public function uploadImage(Request $request)
+    {
+        $image = $request->file('file');
+        $ext = '.' . $image->getClientOriginalExtension();
+        $fileName = str_replace($ext, date('d-m-Y-H-i') . $ext, $image->getClientOriginalName());
+        $path = $request->file('file')->storeAs('uploads', $fileName, 'public');
+        return response()->json([
+            'location' => asset($path)
+        ]);
+    }
 }

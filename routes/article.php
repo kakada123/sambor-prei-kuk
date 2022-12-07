@@ -13,5 +13,6 @@ Route::controller(ArticleController::class)->group(function () {
         Route::post('update/{article}', 'update')->name('update');
         Route::get('destroy/{article}', 'destroy')->name('destroy');
         Route::get('show/{article}', 'show')->name('show');
+        Route::post('upload-image', 'uploadImage')->name('uploadImage');
     });
 });

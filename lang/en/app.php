@@ -23,5 +23,7 @@ return [
     'create_category_success' => 'The category was created.',
     'update_category_success' => 'The category was updated.',
     'select_category' => 'Select Category',
-    'please_input_article_name' => 'Please select category.'
+    'please_input_article_name' => 'Please select category.',
+    'content_en' => 'Content English',
+    'content_km' => 'Content Khmer',
 ];
