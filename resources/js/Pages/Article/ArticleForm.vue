@@ -8,7 +8,7 @@
             :model="form"
             :label-position="labelPosition"
             :rules="rules"
-            ref="categoryForm"
+            ref="articleForm"
             label-width="120px"
             require-asterisk-position="right"
         >
@@ -70,9 +70,13 @@
                 inactive-text="InActive"
                 class="mr-2"
             />
-            <el-button type="success" plain class="me-2">{{
-                $t("app.save")
-            }}</el-button>
+            <el-button
+                type="success"
+                plain
+                class="me-2"
+                @click="submitForm(articleForm)"
+                >{{ $t("app.save") }}</el-button
+            >
         </el-row>
     </el-tabs>
 </template>
@@ -109,7 +113,7 @@ const activeName = ref(defaultLang);
 const store = useStore();
 const currentRoute = route().current();
 const labelPosition = ref("top");
-const categoryForm = ref<FormInstance>();
+const articleForm = ref<FormInstance>();
 let formObject = {
     category: null,
     is_active: true,
@@ -177,7 +181,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     if (!formEl) return;
     await formEl.validate((valid, fields) => {
         if (valid) {
-            form.post(route("category.store"), {
+            form.post(route("article.store"), {
                 onFinish: successSubmit(),
             });
         } else {
@@ -190,23 +194,6 @@ const successUpdate = () => {
         title: trans("app.success"),
         message: trans("app.update_category_success"),
         type: "success",
-    });
-};
-const updateForm = async (formEl: FormInstance | undefined) => {
-    if (!formEl) return;
-    await formEl.validate((valid, fields) => {
-        if (valid) {
-            form.post(
-                route("category.update", {
-                    category: category.value.category_id,
-                }),
-                {
-                    onFinish: successUpdate(),
-                }
-            );
-        } else {
-            console.log("error submit!", fields);
-        }
     });
 };
 const IsRequired = (active: string) => {

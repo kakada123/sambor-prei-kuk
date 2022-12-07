@@ -39,7 +39,7 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd($request->content_en);
     }
 
     /**
