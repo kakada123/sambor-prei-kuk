@@ -53,10 +53,13 @@
                                 min_height: 500,
                                 width: '100%',
                                 toolbar:
-                                    'redo undo image align code fullscreen',
+                                    'undo redo | code | forecolor backcolor | styleselect | fontselect | fontsizeselect| bold italic | alignleft aligncenter alignright alignjustify | outdent indent fullscreen image',
                                 image_title: true,
                                 automatic_uploads: true,
                                 images_upload_url: '/articles/upload-image',
+                                content_style: `@import url('https://fonts.googleapis.com/css2?family=Hanuman&family=Kantumruy:wght@300;400;700&family=Koulen&family=Moul&family=Roboto:ital,wght@0,400;1,700&display=swap');body { font-family: ; 'Hanuman'}`,
+                                font_formats:
+                                    'ហនុមាន=Hanuman;Roboto=Roboto;ម៉ូល=Moul;គូលេន=Koulen',
                             }"
                         />
                     </el-form-item>
