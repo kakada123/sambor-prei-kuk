@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Models\ArticleContent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 
 class ArticleController extends Controller
 {
@@ -39,7 +43,44 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->content_en);
+        try {
+            DB::transaction(function () use ($request) {
+                $thumbnail = $request->file('thumbnail');
+                $ext = '.' . $thumbnail->getClientOriginalExtension();
+                $fileName = str_replace($ext, date('d-m-Y-H-i') . $ext, $thumbnail->getClientOriginalName());
+                $path = $thumbnail->storeAs('uploads/articles', $fileName, 'public');
+                $form = (object)$request->form;
+                $slug = Str::slug($form->name_en ?? "");
+                $article = Article::create([
+                    'category_id' => $form->category ?? null,
+                    'status'    => $form->is_active ?? null,
+                    'slug' => $slug,
+                    'thumbnail' => $path,
+                    'created_by' => Auth::user()->id ?? null
+                ]);
+                if ($slug === "") {
+                    $article->slug = 'article-' . $article->id;
+                    $article->save();
+                }
+                $langs = langs();
+                foreach ($langs as $lang) {
+                    $locale = $lang->locale;
+                    $name = 'name_' . $locale;
+                    $content = 'content_' . $locale;
+                    if ($form->$name or $form->$content) {
+                        ArticleContent::create([
+                            'article_id' => $article->id ?? "",
+                            'lang_id' => $lang->id,
+                            'name'    => $form->$name ?? "",
+                            'desc'   => $form->$content ?? "",
+                            'created_by' => Auth::user()->id ?? null
+                        ]);
+                    }
+                }
+            });
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**

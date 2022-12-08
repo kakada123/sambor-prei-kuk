@@ -26,4 +26,6 @@ return [
     'please_input_article_name' => 'Please select category.',
     'content_en' => 'Content English',
     'content_km' => 'Content Khmer',
+    'thumbnail' => 'Thumbnail',
+    'select_thumbnail' => 'Select Thumbnail',
 ];

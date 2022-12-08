@@ -27,11 +27,28 @@
                     class="w-full"
                 />
             </el-form-item>
-            <el-form-item
-                :label="$t('app.parent')"
-                v-if="isCreateForm && parentName"
-            >
-                <el-input v-model="parentName" :disabled="true" />
+            <el-form-item :label="$t('app.thumbnail')">
+                <el-upload
+                    ref="upload"
+                    class="upload-demo"
+                    :auto-upload="false"
+                    :limit="1"
+                    :on-exceed="handleExceed"
+                    v-model:file-list="thumbnail"
+                    list-type="picture"
+                >
+                    <template #trigger>
+                        <el-button type="primary">{{
+                            $t("app.select_thumbnail")
+                        }}</el-button>
+                    </template>
+
+                    <template #tip>
+                        <div class="el-upload__tip">
+                            jpg/png files with a size less than 500kb
+                        </div>
+                    </template>
+                </el-upload>
             </el-form-item>
             <div v-for="lang in langs">
                 <el-tab-pane :label="lang.name" :name="lang.locale">
@@ -84,6 +101,8 @@
     </el-tabs>
 </template>
 <script lang="ts" setup>
+import { genFileId } from "element-plus";
+import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
 import Editor from "@tinymce/tinymce-vue";
 import { ref, reactive } from "vue";
 import React from "react";
@@ -96,6 +115,15 @@ import { useStore } from "vuex";
 import { ElNotification } from "element-plus";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { trans } from "laravel-vue-i18n";
+const thumbnail = ref<UploadUserFile[]>([]);
+const upload = ref<UploadInstance>();
+
+const handleExceed: UploadProps["onExceed"] = (files) => {
+    upload.value!.clearFiles();
+    const file = files[0] as UploadRawFile;
+    file.uid = genFileId();
+    upload.value!.handleStart(file);
+};
 // computed
 const langs = computed(() => usePage().props.value.langs);
 const category = computed(() => usePage().props.value.category);
@@ -184,8 +212,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     if (!formEl) return;
     await formEl.validate((valid, fields) => {
         if (valid) {
-            form.post(route("article.store"), {
-                onFinish: successSubmit(),
+            Inertia.post(route("article.store"), {
+                _method: "post",
+                forceFormData: true,
+                form: form,
+                thumbnail: thumbnail.value[0].raw,
             });
         } else {
             console.log("error submit!", fields);
