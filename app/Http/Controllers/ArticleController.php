@@ -4,11 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\ArticleContent;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
+
 
 class ArticleController extends Controller
 {
@@ -19,7 +24,37 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        //
+        $globalSearch = AllowedFilter::callback('global', function ($query, $value) {
+            $query->where(function ($query) use ($value) {
+                Collection::wrap($value)->each(function ($value) use ($query) {
+                    $query
+                        ->orWhere('name', 'LIKE', "%{$value}%");
+                });
+            });
+        });
+
+        $articles = QueryBuilder::for(ArticleContent::class)
+            ->defaultSort('name')
+            ->allowedSorts(['name', 'email', 'language_code'])
+            ->allowedFilters(['name', 'email', 'language_code', $globalSearch])
+            ->paginate()
+            ->withQueryString();
+
+        return Inertia::render('Article/Index', [
+            'articles' => $articles,
+        ])->table(function (InertiaTable $table) {
+            $table
+                ->withGlobalSearch()
+                ->defaultSort('name')
+                ->column(key: 'name', searchable: true, sortable: true, canBeHidden: false)
+                ->column(key: 'email', searchable: true, sortable: true)
+                ->column(key: 'language_code', label: 'Language')
+                ->column(label: 'Actions')
+                ->selectFilter(key: 'language_code', label: 'Language', options: [
+                    'en' => 'English',
+                    'nl' => 'Dutch',
+                ]);
+        });
     }
 
     /**
