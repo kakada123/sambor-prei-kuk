@@ -218,6 +218,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 form: form,
                 thumbnail: thumbnail.value[0].raw,
             });
+            successSubmit();
         } else {
             console.log("error submit!", fields);
         }

@@ -28,32 +28,26 @@ class ArticleController extends Controller
             $query->where(function ($query) use ($value) {
                 Collection::wrap($value)->each(function ($value) use ($query) {
                     $query
-                        ->orWhere('name', 'LIKE', "%{$value}%");
+                        ->orWhere('id', 'LIKE', "%{$value}%");
                 });
             });
         });
 
-        $articles = QueryBuilder::for(ArticleContent::class)
-            ->defaultSort('name')
-            ->allowedSorts(['name', 'email', 'language_code'])
-            ->allowedFilters(['name', 'email', 'language_code', $globalSearch])
-            ->paginate()
+        $articles = QueryBuilder::for(Article::class)
+            ->defaultSort('id')
+            ->paginate(5)
             ->withQueryString();
 
         return Inertia::render('Article/Index', [
             'articles' => $articles,
         ])->table(function (InertiaTable $table) {
-            $table
-                ->withGlobalSearch()
-                ->defaultSort('name')
-                ->column(key: 'name', searchable: true, sortable: true, canBeHidden: false)
-                ->column(key: 'email', searchable: true, sortable: true)
-                ->column(key: 'language_code', label: 'Language')
-                ->column(label: 'Actions')
-                ->selectFilter(key: 'language_code', label: 'Language', options: [
-                    'en' => 'English',
-                    'nl' => 'Dutch',
-                ]);
+            $table->column('id', 'ID', searchable: true, sortable: true);
+            $table->column('Thumbnail', searchable: true, sortable: true);
+            $table->column('name', 'Title', searchable: true, sortable: true);
+            $table->column('category_name', 'Category', searchable: true, sortable: true);
+            $table->column('description', 'Description', searchable: true, sortable: true);
+            $table->column('actions', 'Action', searchable: true, sortable: true);
+            $table->withGlobalSearch();
         });
     }
 
@@ -116,6 +110,7 @@ class ArticleController extends Controller
         } catch (\Throwable $th) {
             throw $th;
         }
+        return redirect()->route('article.index');
     }
 
     /**
