@@ -15,16 +15,17 @@
             <el-form-item
                 :label="$t('app.select_category')"
                 :required="true"
-                :prop="category"
+                prop="category"
             >
                 <el-tree-select
                     v-model="form.category"
-                    :data="categories"
+                    :data="dataCategoryTree"
                     :filter-method="filterMethod"
-                    filterable
-                    check-strictly
                     :render-after-expand="false"
+                    :placeholder="$t('app.select_category')"
+                    check-strictly
                     class="w-full"
+                    filterable
                 />
             </el-form-item>
             <el-form-item :label="$t('app.thumbnail')">
@@ -45,7 +46,7 @@
 
                     <template #tip>
                         <div class="el-upload__tip">
-                            jpg/png files with a size less than 500kb
+                            {{ $t("app.upload_file_help_text") }}
                         </div>
                     </template>
                 </el-upload>
@@ -91,11 +92,20 @@
                 class="mr-2"
             />
             <el-button
+                v-if="isCreateForm"
                 type="success"
                 plain
                 class="me-2"
                 @click="submitForm(articleForm)"
                 >{{ $t("app.save") }}</el-button
+            >
+            <el-button
+                v-if="isUpdateForm"
+                type="success"
+                plain
+                class="me-2"
+                @click="updateForm(articleForm)"
+                >{{ $t("app.update") }}</el-button
             >
         </el-row>
     </el-tabs>
@@ -114,8 +124,36 @@ import { Inertia } from "@inertiajs/inertia";
 import { useStore } from "vuex";
 import { ElNotification } from "element-plus";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { trans } from "laravel-vue-i18n";
-const thumbnail = ref<UploadUserFile[]>([]);
+import { wTrans } from "laravel-vue-i18n";
+// computed
+const langs = computed(() => usePage().props.value.langs);
+const article = computed(() => usePage().props.value.article);
+const currentRoute = route().current();
+const isUpdateForm = computed(() => {
+    if (currentRoute === "article.edit") {
+        return true;
+    }
+    return false;
+});
+const isCreateForm = computed(() => {
+    if (currentRoute === "article.create") {
+        return true;
+    }
+    return false;
+});
+let theThumbnail = [];
+if (isUpdateForm.value) {
+    console.log(article.value.thumbnail);
+    if (article.value.thumbnail) {
+        theThumbnail = [
+            {
+                name: article.value.file_name,
+                url: article.value.thumbnail,
+            },
+        ];
+    }
+}
+const thumbnail = ref<UploadUserFile[]>(theThumbnail);
 const upload = ref<UploadInstance>();
 
 const handleExceed: UploadProps["onExceed"] = (files) => {
@@ -124,29 +162,26 @@ const handleExceed: UploadProps["onExceed"] = (files) => {
     file.uid = genFileId();
     upload.value!.handleStart(file);
 };
-// computed
-const langs = computed(() => usePage().props.value.langs);
-const category = computed(() => usePage().props.value.category);
-const categoryId = computed(() => store.getters["category/parent"]);
-const parentName = computed(() => store.getters["category/categoryName"]);
 defineProps({
     categories: Object,
+    status: Number,
 });
 // Data
 const categories = usePage().props.value.categories;
-const data = ref(categories);
+const dataCategoryTree = ref(categories);
 
 const filterMethod = (value) => {
-    data.value = [...categories].filter((item) => item.label.includes(value));
+    dataCategoryTree.value = [...categories].filter((item) =>
+        item.label.includes(value)
+    );
 };
 const defaultLang = "en";
 const activeName = ref(defaultLang);
 const store = useStore();
-const currentRoute = route().current();
 const labelPosition = ref("top");
 const articleForm = ref<FormInstance>();
 let formObject = {
-    category: null,
+    category: "",
     is_active: true,
 };
 langs.value.forEach((lang) => {
@@ -161,29 +196,17 @@ langs.value.forEach((lang) => {
 const handleClick = (tab: TabsPaneContext, event: Event) => {
     console.log(tab, event);
 };
-const isUpdateForm = computed(() => {
-    if (currentRoute === "category.edit") {
-        return true;
-    }
-    return false;
-});
-const isCreateForm = computed(() => {
-    if (currentRoute === "category.create") {
-        return true;
-    }
-    return false;
-});
 if (isUpdateForm.value) {
-    formObject = useForm(category.value);
+    formObject = useForm(article.value);
 }
 const form = useForm(formObject);
-const requiredMessage = trans("app.please_input_article_name");
+const requiredMessage = wTrans("app.please_input_article_name");
 const rules = reactive<FormRules>({
     category: [
         {
             required: true,
-            message: trans("app.please_select_category"),
-            trigger: "blur",
+            message: wTrans("app.please_select_category"),
+            trigger: "change",
         },
     ],
     name_en: [
@@ -203,32 +226,64 @@ const rules = reactive<FormRules>({
 });
 const successSubmit = () => {
     ElNotification({
-        title: trans("app.success"),
-        message: trans("app.create_category_success"),
+        title: wTrans("app.success"),
+        message: wTrans("app.create_article_success"),
         type: "success",
+    });
+};
+const failSubmit = () => {
+    ElNotification({
+        title: wTrans("app.fail"),
+        message: wTrans("app.create_article_fail"),
+        type: "error",
     });
 };
 const submitForm = async (formEl: FormInstance | undefined) => {
     if (!formEl) return;
     await formEl.validate((valid, fields) => {
         if (valid) {
-            Inertia.post(route("article.store"), {
-                _method: "post",
-                forceFormData: true,
-                form: form,
-                thumbnail: thumbnail.value[0].raw,
-            });
-            successSubmit();
+            Inertia.post(
+                route("article.store"),
+                {
+                    _method: "post",
+                    forceFormData: true,
+                    form: form,
+                    thumbnail: thumbnail.value[0]
+                        ? thumbnail.value[0].raw
+                        : null,
+                    preserveScroll: true,
+                },
+                {
+                    onSuccess: successSubmit(),
+                }
+            );
         } else {
             console.log("error submit!", fields);
         }
     });
 };
-const successUpdate = () => {
-    ElNotification({
-        title: trans("app.success"),
-        message: trans("app.update_category_success"),
-        type: "success",
+const updateForm = async (formEl: FormInstance | undefined) => {
+    if (!formEl) return;
+    await formEl.validate((valid, fields) => {
+        if (valid) {
+            Inertia.post(
+                route("article.update", { article: article.value.id }),
+                {
+                    _method: "post",
+                    forceFormData: true,
+                    form: form,
+                    thumbnail: thumbnail.value[0]
+                        ? thumbnail.value[0].raw
+                        : null,
+                    preserveScroll: true,
+                },
+                {
+                    onSuccess: successSubmit(),
+                }
+            );
+        } else {
+            console.log("error submit!", fields);
+        }
     });
 };
 const IsRequired = (active: string) => {

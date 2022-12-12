@@ -28,4 +28,7 @@ return [
     'content_km' => 'Content Khmer',
     'thumbnail' => 'Thumbnail',
     'select_thumbnail' => 'Select Thumbnail',
+    'please_select_category' => 'Please Select Category',
+    'create_article_success' => 'The article was created.',
+    'upload_file_help_text' => 'jpg/png files with a size less than 500kb'
 ];

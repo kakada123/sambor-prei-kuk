@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
 
 class Article extends Model
@@ -16,7 +18,8 @@ class Article extends Model
         'slug',
         'created_by',
     ];
-    protected $appends = ['name', 'description', 'category_name'];
+    protected $appends = ['name', 'description', 'category_name', 'created_on'];
+    use SoftDeletes;
     function content()
     {
         $lang = Language::byLocale(App::getLocale())->first();
@@ -24,7 +27,7 @@ class Article extends Model
     }
     function getNameAttribute()
     {
-        $content = $this->content;
+        $content = $this->content ?? "";
         $name = "";
         if ($content) {
             if ($content->name !== "") {
@@ -37,7 +40,7 @@ class Article extends Model
     }
     function getDescriptionAttribute()
     {
-        $content = $this->content;
+        $content = $this->content ?? "";
         if ($content) {
             if ($content->desc !== "") {
                 return $content->desc ?? "";
@@ -48,10 +51,14 @@ class Article extends Model
     }
     function getCategoryNameAttribute()
     {
-        return $this->category->name;
+        return $this->category?->name ?? "";
     }
     function category()
     {
         return $this->hasOne(Category::class, 'id', 'category_id');
+    }
+    function getCreatedOnAttribute()
+    {
+        return $this->created_at->format('d, Y M h:i:s a');
     }
 }
