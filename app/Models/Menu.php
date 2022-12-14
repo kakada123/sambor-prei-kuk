@@ -17,4 +17,21 @@ class Menu extends Model
         'status',
         'type'
     ];
+    public function scopeByType($query, $menuType)
+    {
+        return $query->where('type', $menuType);
+    }
+    function scopeParent($query)
+    {
+        return $query->whereNull('parent_id')->orWhere('parent_id', 0);
+    }
+    function parentCategories()
+    {
+        $parentCategories = Menu::parent()->get();
+        return $parentCategories;
+    }
+    public function children()
+    {
+        return $this->hasMany(Menu::class, 'parent_id', 'id')->with('children');
+    }
 }

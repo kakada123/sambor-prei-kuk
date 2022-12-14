@@ -4,9 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Menu;
 use App\Models\MenuContent;
+use App\Models\MenuType;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
+use App\Models\Language;
+use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class MenuController extends Controller
 {
@@ -15,9 +23,30 @@ class MenuController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $name = 'name_' . App::getLocale();
+        $globalSearch = AllowedFilter::callback('global', function ($query, $value) use ($name) {
+            $query->where(function ($query) use ($value, $name) {
+                Collection::wrap($value)->each(function ($value) use ($query, $name) {
+                    $query
+                        ->orWhere('menu_types.' . $name, 'LIKE', "%{$value}%");
+                });
+            });
+        });
+        $menus = QueryBuilder::for(MenuType::class)
+            ->allowedFilters(['menu_types.' . $name, $globalSearch])
+            ->paginate($request->perPage ?? 15)
+            ->withQueryString();
+        return Inertia::render('Menu/Index', [
+            'menus' => $menus,
+        ])->table(function (InertiaTable $table) use ($name) {
+            $table
+                ->column('id', 'No')
+                ->column($name, 'Name')
+                ->column('actions', 'Action')
+                ->withGlobalSearch();
+        });
     }
 
     /**
@@ -25,9 +54,14 @@ class MenuController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(MenuType $menuType, Request $request)
     {
-        //
+        $name = 'name_' . App::getLocale();
+        return Inertia::render('Menu/CreateMenu', [
+            'menus' => $this->getMenu($menuType),
+            'menu_type_name' => $menuType->$name,
+            'menuType' => $menuType->slug
+        ]);
     }
 
     /**
@@ -74,9 +108,14 @@ class MenuController extends Controller
      * @param  \App\Models\Menu  $menu
      * @return \Illuminate\Http\Response
      */
-    public function show(Menu $menu)
+    public function show(MenuType $menuType)
     {
-        //
+        $name = 'name_' . App::getLocale();
+        return Inertia::render('Menu/ShowMenu', [
+            'menus' => $this->getMenu($menuType),
+            'menu_type_name' => $menuType->$name,
+            'menuType' => $menuType->slug
+        ]);
     }
 
     /**
@@ -87,7 +126,6 @@ class MenuController extends Controller
      */
     public function edit(Menu $menu)
     {
-        //
     }
 
     /**
@@ -111,5 +149,47 @@ class MenuController extends Controller
     public function destroy(Menu $menu)
     {
         //
+    }
+    public function getMenu($menuType)
+    {
+        $menus = Menu::byType($menuType)->parent()->get();
+        $theMenus = [];
+        foreach ($menus as $menu) {
+            $theMenus[$menu->id] = [
+                'label'         => $menu->name,
+                'id'            => $menu->id,
+                'value'         => $menu->id,
+                'description'   => $menu->description
+            ];
+            if ($menu->children) {
+                foreach ($menu->children as $child) {
+                    $theMenus[$menu->id]['children'][] = [
+                        'label' => $child->name,
+                        'id'    => $child->id,
+                        'value'    => $child->id,
+                        'description'   => $menu->description,
+                        'children' => $this->childMenu($child)
+                    ];
+                }
+            }
+        }
+        return array_values($theMenus);
+    }
+    public function childMenu($menu)
+    {
+        $subMenus = [];
+        if ($menu->children) {
+            foreach ($menu->children as $child) {
+                $subMenus[] = [
+                    'label' => $child->name,
+                    'id'    => $child->id,
+                    'value'    => $child->id,
+                    'description'   => $menu->description,
+                    'children' => $this->childMenu($child)
+                ];
+                Self::childMenu($child);
+            }
+            return array_values($subMenus);
+        }
     }
 }

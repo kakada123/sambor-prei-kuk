@@ -36,20 +36,12 @@ const active = route().current();
                         <span>{{ $t("app.Categories") }}</span>
                     </el-menu-item>
                 </Link>
-                <el-sub-menu index="3">
-                    <template #title>
-                        <el-icon><icon-menu /></el-icon>
+                <Link :href="appRoute('menu.index')">
+                    <el-menu-item index="menu.index">
+                         <el-icon><icon-menu /></el-icon>
                         <span>{{ $t("app.Menus") }}</span>
-                    </template>
-                    <el-menu-item index="3-1">
-                        <el-icon><ArrowRight /></el-icon>
-                        {{ $t("app.Menus") }}
                     </el-menu-item>
-                    <el-menu-item index="3-2">
-                        <el-icon><ArrowRight /></el-icon>
-                        {{ $t("app.Create menu") }}
-                    </el-menu-item>
-                </el-sub-menu>
+                </Link>
                 <el-sub-menu index="4">
                     <template #title>
                         <el-icon><Files /></el-icon>
