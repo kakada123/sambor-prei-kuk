@@ -260,4 +260,23 @@ class ArticleController extends Controller
             'location' => asset($path)
         ]);
     }
+    /**
+     * Get Articles by category
+     * @param  $categoryId
+     * @return \Illuminate\Http\Response
+     */
+    public function getArticleByCategory($categoryId)
+    {
+        $articles = Article::byCategory($categoryId)->get();
+        $selecteArticles = [];
+        foreach ($articles as $key => $article) {
+            $selecteArticles[$key] = [
+                'value' =>  $article->id,
+                'label' =>  $article->name
+            ];
+        }
+        return response()->json([
+            'articles' => $selecteArticles
+        ], 200);
+    }
 }

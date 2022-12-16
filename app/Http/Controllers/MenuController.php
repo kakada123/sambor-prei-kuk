@@ -57,10 +57,12 @@ class MenuController extends Controller
     public function create(MenuType $menuType, Request $request)
     {
         $name = 'name_' . App::getLocale();
+        $categoryControler = new CategoryController;
         return Inertia::render('Menu/CreateMenu', [
             'menus' => $this->getMenu($menuType),
             'menu_type_name' => $menuType->$name,
-            'menuType' => $menuType->slug
+            'menuType' => $menuType->slug,
+            'categories' => $categoryControler->getCategory()
         ]);
     }
 
@@ -114,7 +116,7 @@ class MenuController extends Controller
         return Inertia::render('Menu/ShowMenu', [
             'menus' => $this->getMenu($menuType),
             'menu_type_name' => $menuType->$name,
-            'menuType' => $menuType->slug
+            'menuType' => $menuType->slug,
         ]);
     }
 

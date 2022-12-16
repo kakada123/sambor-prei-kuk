@@ -20,12 +20,12 @@ class Article extends Model
     ];
     protected $appends = ['name', 'description', 'category_name', 'created_on'];
     use SoftDeletes;
-    function content()
+    public function content()
     {
         $lang = Language::byLocale(App::getLocale())->first();
         return $this->hasOne(ArticleContent::class, 'article_id', 'id')->where('lang_id', $lang->id ?? null);
     }
-    function getNameAttribute()
+    public function getNameAttribute()
     {
         $content = $this->content ?? "";
         $name = "";
@@ -38,7 +38,7 @@ class Article extends Model
         $name = $content->name ?? "";
         return $name;
     }
-    function getDescriptionAttribute()
+    public function getDescriptionAttribute()
     {
         $content = $this->content ?? "";
         if ($content) {
@@ -49,16 +49,20 @@ class Article extends Model
         $content = $this->hasOne(ArticleContent::class, 'article_id', 'id')->whereNotNull('desc')->first();
         return $content->desc ?? "";
     }
-    function getCategoryNameAttribute()
+    public function getCategoryNameAttribute()
     {
         return $this->category?->name ?? "";
     }
-    function category()
+    public function category()
     {
         return $this->hasOne(Category::class, 'id', 'category_id');
     }
-    function getCreatedOnAttribute()
+    public function getCreatedOnAttribute()
     {
         return $this->created_at->format('d, Y M h:i:s a');
+    }
+    public function scopeByCategory($query, $categoryId)
+    {
+        $query->where('category_id', $categoryId);
     }
 }

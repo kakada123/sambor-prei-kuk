@@ -14,5 +14,6 @@ Route::controller(ArticleController::class)->group(function () {
         Route::get('destroy/{article}', 'destroy')->name('destroy');
         Route::get('show/{article}', 'show')->name('show');
         Route::post('upload-image', 'uploadImage')->name('uploadImage');
+        Route::get('get-article-by/category/{category_id}', 'getArticleByCategory')->name('get_article_by_category');
     });
 });

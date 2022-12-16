@@ -12,11 +12,35 @@
             label-width="120px"
             require-asterisk-position="right"
         >
-            <el-form-item
-                :label="$t('app.parent')"
-                v-if="isCreateForm && parentName"
-            >
-                <el-input v-model="parentName" :disabled="true" />
+            <el-form-item :label="$t('app.select_category')" prop="category">
+                <el-tree-select
+                    v-model="form.category"
+                    :data="dataCategoryTree"
+                    :filter-method="filterMethod"
+                    :render-after-expand="false"
+                    :placeholder="$t('app.select_category')"
+                    check-strictly
+                    class="w-full"
+                    filterable
+                    clearable
+                    @change="getArticles"
+                />
+            </el-form-item>
+            <el-form-item :label="$t('app.select_article')" prop="article">
+                <el-select
+                    v-model="form.article"
+                    :placeholder="$t('app.select_article')"
+                    clearable
+                    filterable
+                    class="w-full"
+                >
+                    <el-option
+                        v-for="article in articles"
+                        :key="article.value"
+                        :label="article.label"
+                        :value="article.value"
+                    />
+                </el-select>
             </el-form-item>
             <div v-for="lang in langs">
                 <el-tab-pane :label="lang.name" :name="lang.locale">
@@ -89,6 +113,15 @@ const category = computed(() => usePage().props.value.category);
 const categoryId = computed(() => store.getters["category/parent"]);
 const parentName = computed(() => store.getters["category/categoryName"]);
 // Data
+const categories = usePage().props.value.categories;
+const dataCategoryTree = ref(categories);
+
+const filterMethod = (value) => {
+    dataCategoryTree.value = [...categories].filter((item) =>
+        item.label.includes(value)
+    );
+};
+// Data
 const defaultLang = "en";
 const activeName = ref(defaultLang);
 const store = useStore();
@@ -99,6 +132,7 @@ let formObject = {
     is_active: true,
     parent: categoryId.value,
     parentName: parentName.value,
+    article: null,
 };
 langs.value.forEach((lang) => {
     let name = "name_" + lang.locale;
@@ -212,6 +246,19 @@ const deleteCategory = () => {
                 type: "info",
                 message: "Delete canceled",
             });
+        });
+};
+interface ListItem {
+    value: string;
+    label: string;
+}
+const articles = ref<ListItem[]>([]);
+const getArticles = async () => {
+    await axios
+        .get(route("article.get_article_by_category", form.category))
+        .then((response) => {
+            form.article = null;
+            articles.value = response.data.articles;
         });
 };
 </script>

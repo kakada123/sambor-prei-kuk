@@ -32,5 +32,6 @@ return [
     'create_article_success' => 'The article was created.',
     'upload_file_help_text' => 'jpg/png files with a size less than 500kb',
     'edit' => 'Edit',
-    'Edit Menu' => 'Edit Menu'
+    'Edit Menu' => 'Edit Menu',
+    'select_article' => 'Select Article'
 ];
