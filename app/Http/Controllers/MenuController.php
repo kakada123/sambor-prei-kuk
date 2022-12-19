@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use App\Models\Language;
+use Illuminate\Support\Facades\Auth;
 use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -56,13 +57,17 @@ class MenuController extends Controller
      */
     public function create(MenuType $menuType, Request $request)
     {
+        $menu_id = $request->menu ?? null;
+        $menu = Menu::find($menu_id);
         $name = 'name_' . App::getLocale();
         $categoryControler = new CategoryController;
         return Inertia::render('Menu/CreateMenu', [
-            'menus' => $this->getMenu($menuType),
-            'menu_type_name' => $menuType->$name,
-            'menuType' => $menuType->slug,
-            'categories' => $categoryControler->getCategory()
+            'menus' => $this->getMenu($menuType->slug ?? ""),
+            'menu_type_name' => $menuType->$name ?? "",
+            'menuType' => $menuType->slug ?? "",
+            'categories' => $categoryControler->getCategory(),
+            'menu_id' => $menu_id,
+            'menu_name' => $menu->name ?? "",
         ]);
     }
 
@@ -72,36 +77,46 @@ class MenuController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, $category)
+    public function store(Request $request)
     {
-        DB::transaction(function () use ($request, $category) {
-            // Menu
-            $slug = Str::slug($request->name_en ?? "");
-            $menu = Menu::create([
-                'category_id' => $category->id ?? null,
-                'parent_id' => $request->parent ?? null,
-                'status' => $request->is_active ?? null,
-                'slug' => $slug
-            ]);
-            if ($slug === "") {
-                $menu->slug = 'menu-' . $menu->id;
-                $menu->save();
-            }
-            $langs = langs();
-            foreach ($langs as $lang) {
-                $locale = $lang->locale;
-                $name = 'name_' . $locale;
-                $description = 'description_' . $locale;
-                if ($request->$name or $request->$description) {
-                    MenuContent::create([
-                        'menu_id' => $menu->id ?? null,
-                        'lang_id' => $lang->id,
-                        'name'    => $request->$name ?? "",
-                        'description'   => $request->$description ?? ""
-                    ]);
+        try {
+            //code...
+            DB::transaction(function () use ($request) {
+                // Menu
+                $slug = Str::slug($request->name_en ?? "");
+                $menu = Menu::create([
+                    'category_id' => $request->category ?? null,
+                    'article_id' => $request->article ?? null,
+                    'type' => $request->menuType,
+                    'parent_id' => $request->parent ?? null,
+                    'status' => $request->is_active ?? null,
+                    'order' => $request->order ?? 0,
+                    'slug' => $slug,
+                    'created_by' => Auth::user()->id ?? null
+                ]);
+                if ($slug === "") {
+                    $menu->slug = 'menu-' . $menu->id;
+                    $menu->save();
                 }
-            }
-        });
+                $langs = langs();
+                foreach ($langs as $lang) {
+                    $locale = $lang->locale;
+                    $name = 'name_' . $locale;
+                    $description = 'description_' . $locale;
+                    if ($request->$name or $request->$description) {
+                        MenuContent::create([
+                            'menu_id' => $menu->id ?? null,
+                            'lang_id' => $lang->id,
+                            'name'    => $request->$name ?? "",
+                            'description'   => $request->$description ?? ""
+                        ]);
+                    }
+                }
+            });
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', __('app.created_fail'));;
+        }
+        return redirect()->route('menu.show', $request->menuType ?? "");
     }
 
     /**
@@ -114,9 +129,9 @@ class MenuController extends Controller
     {
         $name = 'name_' . App::getLocale();
         return Inertia::render('Menu/ShowMenu', [
-            'menus' => $this->getMenu($menuType),
-            'menu_type_name' => $menuType->$name,
-            'menuType' => $menuType->slug,
+            'menus' => $this->getMenu($menuType->slug ?? ""),
+            'menu_type_name' => $menuType->$name ?? "",
+            'menuType' => $menuType->slug ?? "",
         ]);
     }
 
@@ -126,8 +141,44 @@ class MenuController extends Controller
      * @param  \App\Models\Menu  $menu
      * @return \Illuminate\Http\Response
      */
-    public function edit(Menu $menu)
+    public function edit(Menu $menu, MenuType $menuType)
     {
+
+        $theMenu = [
+            'category'      => $menu->category_id ?? "",
+            'article'       => $menu->article_id ?? "",
+            'is_active'     => $menu->status ? true : false,
+            'parent'        => $menu->parent_id ?? "",
+            'menuType'      => $menu->type ?? "",
+            'order'         => $menu->order ?? 0
+        ];
+
+        $langs = langs();
+        foreach ($langs as $lang) {
+            $menuContent = MenuContent::where([
+                'menu_id' => $menu->id,
+                'lang_id' => $lang->id
+            ])->first();
+            $locale = $lang->locale;
+            $name = "name_" . $locale;
+            $description = "description_" . $locale;
+            $theMenu[$name] = $menuContent->name ?? "";
+            $theMenu[$description] = $menuContent->description ?? "";
+        }
+
+        $name = 'name_' . App::getLocale();
+        $categoryControler = new CategoryController;
+        $articleController = new ArticleController;
+        $articles = $articleController->articleByCategory($menu->category_id ?? null);
+        return Inertia::render('Menu/EditMenu', [
+            'menus' => $this->getMenu($menuType->slug ?? ""),
+            'menu_type_name' => $menuType->$name ?? "",
+            'menuType' => $menuType->slug ?? "",
+            'categories' => $categoryControler->getCategory(),
+            'menu' => $theMenu,
+            'articles' => $articles,
+            'menu_id' => $menu->id ?? "",
+        ]);
     }
 
     /**
@@ -139,7 +190,48 @@ class MenuController extends Controller
      */
     public function update(Request $request, Menu $menu)
     {
-        //
+        try {
+            //code...
+            DB::transaction(function () use ($request, $menu) {
+                // Menu
+                $slug = Str::slug($request->name_en ?? "");
+                $menu->update([
+                    'category_id' => $request->category ?? null,
+                    'article_id' => $request->article ?? null,
+                    'type' => $request->menuType,
+                    'parent_id' => $request->parent ?? null,
+                    'status' => $request->is_active ?? null,
+                    'order' => $request->order ?? 0,
+                    'slug' => $slug,
+                    'updated_by' => Auth::user()->id ?? null
+                ]);
+                if ($slug === "") {
+                    $menu->slug = 'menu-' . $menu->id;
+                    $menu->save();
+                }
+                $langs = langs();
+                foreach ($langs as $lang) {
+                    $locale = $lang->locale;
+                    $name = 'name_' . $locale;
+                    $description = 'description_' . $locale;
+                    if ($request->$name or $request->$description) {
+                        $mathThese = [
+                            'menu_id' => $menu->id ?? null,
+                            'lang_id' => $lang->id,
+                        ];
+                        MenuContent::updateOrcreate($mathThese, [
+                            'menu_id' => $menu->id ?? null,
+                            'lang_id' => $lang->id,
+                            'name'    => $request->$name ?? "",
+                            'description'   => $request->$description ?? ""
+                        ]);
+                    }
+                }
+            });
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', __('app.created_fail'));;
+        }
+        return redirect()->route('menu.show', $request->menuType ?? "");
     }
 
     /**
@@ -150,11 +242,14 @@ class MenuController extends Controller
      */
     public function destroy(Menu $menu)
     {
-        //
+        $menu->deleted_by = Auth::user()->id;
+        $menu->save();
+        $menu->delete();
+        return redirect()->route('menu.show', $menu->type ?? "");
     }
     public function getMenu($menuType)
     {
-        $menus = Menu::byType($menuType)->parent()->get();
+        $menus = Menu::orderBy('order', 'ASC')->byType($menuType)->parent()->get();
         $theMenus = [];
         foreach ($menus as $menu) {
             $theMenus[$menu->id] = [

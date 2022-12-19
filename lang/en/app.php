@@ -33,5 +33,7 @@ return [
     'upload_file_help_text' => 'jpg/png files with a size less than 500kb',
     'edit' => 'Edit',
     'Edit Menu' => 'Edit Menu',
-    'select_article' => 'Select Article'
+    'select_article' => 'Select Article',
+    'order' => 'Order',
+    'update_menu_success' => 'The menu was updated.'
 ];

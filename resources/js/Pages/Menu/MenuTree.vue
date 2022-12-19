@@ -27,7 +27,7 @@
                 </div>
                 <el-tree
                     :data="dataTree"
-                    @node-click="categoryClick"
+                    @node-click="menuClick"
                     :default-expand-all="isExpandAll"
                     :key="categoryTreeKey"
                     :default-expanded-keys="[expandedId]"
@@ -55,11 +55,11 @@ export default {
             expandedId: null,
         };
     },
-    props: ["menus", "menu_type_name", "menuType"],
+    props: ["menus", "menu_type_name", "menuType", "menu_id"],
     mounted() {
-        this.menuId = this.parent;
+        this.menuId = this.menu_id;
         this.dataTree = this.menus;
-        this.expandedId = this.parent;
+        this.expandedId = this.menu_id;
     },
     methods: {
         collapseAll() {
@@ -72,34 +72,19 @@ export default {
             this.isExpandAll = true;
             this.categoryTreeKey += 1;
         },
-        createMainCategory() {
-            alert("create main category");
-        },
-        categoryClick(Tree) {
+        menuClick(Tree) {
             this.menuId = Tree.id;
             this.expandedId = null;
-            Inertia.visit(route("category.edit", { category: this.menuId }));
-            let category = {
-                id: Tree.id,
-                name: Tree.label,
-                description: Tree.description,
-            };
-            this.$store.dispatch({
-                type: "category/clickOnCategory",
-                category: category,
-            });
+            Inertia.visit(
+                route("menu.edit", {
+                    menu: this.menuId,
+                    menuType: this.menuType,
+                })
+            );
         },
         createRootMenu() {
             this.collapseAll();
             this.menuId = null;
-            this.$store.dispatch({
-                type: "category/clickOnCategory",
-                category: {
-                    id: null,
-                    name: null,
-                    description: null,
-                },
-            });
             this.createTheMenu();
         },
         createTheMenu() {
@@ -108,14 +93,18 @@ export default {
             });
         },
         createSubCategory() {
-            this.menuId = this.$store.getters["category/parent"];
-            this.createTheMenu();
+            Inertia.visit(
+                route("menu.create", {
+                    menuType: this.menuType,
+                    menu: this.menuId,
+                }),
+                {
+                    method: "get",
+                }
+            );
         },
     },
     computed: {
-        parent() {
-            return this.$store.getters["category/parent"];
-        },
         expanded() {
             if (this.isExpandAll) {
                 return true;

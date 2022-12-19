@@ -263,9 +263,9 @@ class ArticleController extends Controller
     /**
      * Get Articles by category
      * @param  $categoryId
-     * @return \Illuminate\Http\Response
+     * @return $selecteArticles
      */
-    public function getArticleByCategory($categoryId)
+    public function articleByCategory($categoryId)
     {
         $articles = Article::byCategory($categoryId)->get();
         $selecteArticles = [];
@@ -275,6 +275,16 @@ class ArticleController extends Controller
                 'label' =>  $article->name
             ];
         }
+        return $selecteArticles;
+    }
+    /**
+     * Get Articles by category
+     * @param  $categoryId
+     * @return \Illuminate\Http\Response
+     */
+    public function getArticleByCategory($categoryId)
+    {
+        $selecteArticles = $this->articleByCategory($categoryId);
         return response()->json([
             'articles' => $selecteArticles
         ], 200);
