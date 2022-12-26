@@ -18,9 +18,9 @@
             <template #cell(No)="{ item: article }">
                 {{ articles.data.findIndex((x) => x.id === article.id) + 1 }}
             </template>
-            <template #cell(Thumbnail)="{ item: article }">
+            <template #cell(thumbnail_src)="{ item: article }">
                 <img
-                    :src="article.thumbnail ?? '/assets/image/no-image.jpg'"
+                    :src="article.thumbnail_src ?? '/assets/image/no-image.jpg'"
                     class="w-10"
                 />
             </template>

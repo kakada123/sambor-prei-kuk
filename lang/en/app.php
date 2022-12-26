@@ -23,7 +23,7 @@ return [
     'create_category_success' => 'The category was created.',
     'update_category_success' => 'The category was updated.',
     'select_category' => 'Select Category',
-    'please_input_article_name' => 'Please select category.',
+    'please_input_article_name' => 'Please input article name.',
     'content_en' => 'Content English',
     'content_km' => 'Content Khmer',
     'thumbnail' => 'Thumbnail',
@@ -35,5 +35,11 @@ return [
     'Edit Menu' => 'Edit Menu',
     'select_article' => 'Select Article',
     'order' => 'Order',
-    'update_menu_success' => 'The menu was updated.'
+    'update_menu_success' => 'The menu was updated.',
+    'Edit Article' => 'Edit Article',
+    'home' => 'Home',
+    'news' => 'News',
+    'news_and_events' => 'News and events',
+    'related_articles' => 'Related articles',
+    'read_more' => 'Read more'
 ];

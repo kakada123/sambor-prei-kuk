@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -15,13 +15,16 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+require __DIR__ . '/frontend.php';
+
+Route::get('/linkstorage', function () {
+    Artisan::call('storage:link');
+});
+Route::get('/symlink', function () {
+    $target = $_SERVER['DOCUMENT_ROOT'] . '/storage/app/public';
+    $link = $_SERVER['DOCUMENT_ROOT'] . '/public/storage';
+    symlink($target, $link);
+    echo "Done";
 });
 
 Route::get('/dashboard', function () {

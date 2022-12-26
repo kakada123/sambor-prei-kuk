@@ -35,6 +35,7 @@
                     :auto-upload="false"
                     :limit="1"
                     :on-exceed="handleExceed"
+                    :on-remove="RemoveThumbnail"
                     v-model:file-list="thumbnail"
                     list-type="picture"
                 >
@@ -75,9 +76,9 @@
                                 image_title: true,
                                 automatic_uploads: true,
                                 images_upload_url: '/articles/upload-image',
-                                content_style: `@import url('https://fonts.googleapis.com/css2?family=Hanuman&family=Kantumruy:wght@300;400;700&family=Koulen&family=Moul&family=Roboto:ital,wght@0,400;1,700&display=swap');body { font-family: ; 'Hanuman'}`,
+                                content_style: `@import url('https://fonts.googleapis.com/css2?family=Hanuman&family=Kantumruy:wght@300;400;700&family=Koulen&family=Moul&family=Roboto:ital,wght@0,400;1,700&display=swap&family=Siemreap&display=swap');body { font-family: ; 'Hanuman'}`,
                                 font_formats:
-                                    'ហនុមាន=Hanuman;Roboto=Roboto;ម៉ូល=Moul;គូលេន=Koulen',
+                                    'ហនុមាន=Hanuman;Roboto=Roboto;ម៉ូល=Moul;គូលេន=Koulen;សៀមរាប=Siemreap;',
                             }"
                         />
                     </el-form-item>
@@ -143,11 +144,10 @@ const isCreateForm = computed(() => {
 });
 let theThumbnail = [];
 if (isUpdateForm.value) {
-    console.log(article.value.thumbnail);
     if (article.value.thumbnail) {
         theThumbnail = [
             {
-                name: article.value.file_name,
+                name: article.value.thumbnail,
                 url: article.value.thumbnail,
             },
         ];
@@ -262,6 +262,10 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         }
     });
 };
+const isRemoveImage = ref(false);
+const RemoveThumbnail: UploadProps["onRemove"] = (file, uploadFiles) => {
+    isRemoveImage.value = true;
+};
 const updateForm = async (formEl: FormInstance | undefined) => {
     if (!formEl) return;
     await formEl.validate((valid, fields) => {
@@ -272,6 +276,7 @@ const updateForm = async (formEl: FormInstance | undefined) => {
                     _method: "post",
                     forceFormData: true,
                     form: form,
+                    isRemoveImage: isRemoveImage.value,
                     thumbnail: thumbnail.value[0]
                         ? thumbnail.value[0].raw
                         : null,

@@ -44,6 +44,7 @@ class ArticleController extends Controller
             ->join('category_contents', 'category_contents.category_id', 'articles.category_id')
             ->where('article_contents.lang_id', $lang->id ?? 1)
             ->allowedFilters(['article_contents.name', $globalSearch])
+            ->distinct()
             ->paginate($request->perPage ?? 15)
             ->withQueryString();
         return Inertia::render('Article/Index', [
@@ -51,7 +52,7 @@ class ArticleController extends Controller
         ])->table(function (InertiaTable $table) {
             $table
                 ->column('No')
-                ->column('Thumbnail')
+                ->column('thumbnail_src')
                 ->column('name', 'Title')
                 ->column('category_name', 'Category')
                 ->column('created_on', 'Created at')
@@ -146,7 +147,7 @@ class ArticleController extends Controller
     {
         $path = "";
         if (Storage::disk('public')->exists($article->thumbnail ?? "") && $article->thumbnail !== null) {
-            $path = "/" . $article->thumbnail;
+            $path = Storage::url($article->thumbnail);
         }
         $theArticle = [
             'id'            => $article->id,
@@ -191,7 +192,7 @@ class ArticleController extends Controller
                     $fileName = str_replace($ext, date('d-m-Y-H-i') . $ext, $thumbnail->getClientOriginalName());
                     $path = $thumbnail->storeAs('uploads/articles', $fileName, 'public');
                     $article->thumbnail = $path;
-                } else {
+                } elseif ($request->isRemoveImage) {
                     $file = $article->thumbnail ?? "";
                     if (Storage::disk('public')->exists($file)) {
                         Storage::disk('public')->delete($file);
@@ -257,7 +258,7 @@ class ArticleController extends Controller
         $fileName = str_replace($ext, date('d-m-Y-H-i') . $ext, $image->getClientOriginalName());
         $path = $request->file('file')->storeAs('uploads', $fileName, 'public');
         return response()->json([
-            'location' => asset($path)
+            'location' => '/storage/' . $path
         ]);
     }
     /**

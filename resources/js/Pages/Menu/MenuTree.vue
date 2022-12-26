@@ -12,7 +12,7 @@
             </div>
         </template>
         <el-row>
-            <el-col :span="6">
+            <el-col :span="8">
                 <div class="mb-2">
                     <el-button @click="collapseAll" v-if="expanded">
                         <el-icon><Fold /></el-icon>
@@ -37,7 +37,7 @@
                     node-key="id"
                 />
             </el-col>
-            <el-col :span="18">
+            <el-col :span="16">
                 <slot></slot>
             </el-col>
         </el-row>

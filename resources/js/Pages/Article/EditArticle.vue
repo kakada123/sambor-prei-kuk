@@ -1,17 +1,17 @@
 <template>
-    <Head :title="$t('app.Edit article')"></Head>
+    <Head :title="$t('app.Edit Article')"></Head>
     <BreadcrumbVue>
         <el-breadcrumb-item :to="{ path: '/article' }">{{
-            $t("app.Articles")
+            $t("app.Edit Article")
         }}</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ path: '/' }">{{
-            $t("app.Edit article")
+            $t("app.Edit Article")
         }}</el-breadcrumb-item>
     </BreadcrumbVue>
     <el-card class="box-card mt-4 custom-card">
         <template #header>
             <div class="card-header">
-                <span>{{ $t("app.Edit article") }}</span>
+                <span>{{ $t("app.Edit Article") }}</span>
             </div>
         </template>
         <ArticleForm :categories="categories" :article="article"></ArticleForm>

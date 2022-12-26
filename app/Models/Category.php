@@ -30,12 +30,14 @@ class Category extends Model
         $name = "";
         if ($content) {
             if ($content->name !== "") {
-                $name = $content->name ?? "";
+                return $content->name ?? "";
             }
         }
-        $content = $this->hasOne(CategoryContent::class, 'category_id', 'id')->whereNotNull('name')->first();
-        $name = $content->name ?? "";
-        return $name;
+        $content = $this->hasOne(CategoryContent::class, 'category_id', 'id')
+            ->whereNotNull('name')
+            ->where('name', '<>', '')
+            ->first();
+        return $content->name ?? "";
     }
     function getDescriptionAttribute()
     {
@@ -45,7 +47,10 @@ class Category extends Model
                 return $content->description ?? "";
             }
         }
-        $content = $this->hasOne(CategoryContent::class, 'category_id', 'id')->whereNotNull('description')->first();
+        $content = $this->hasOne(CategoryContent::class, 'category_id', 'id')
+            ->whereNotNull('description')
+            ->where('description', '<>', '')
+            ->first();
         return $content->description ?? "";
     }
     function scopeParent($query)
@@ -64,5 +69,9 @@ class Category extends Model
     public function categoryContents()
     {
         return $this->hasMany(CategoryContent::class, 'category_id', 'id');
+    }
+    public function scopeBySlug($query, $slug)
+    {
+        return $query->where('slug', $slug);
     }
 }
