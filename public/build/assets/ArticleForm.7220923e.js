@@ -1,0 +1,1 @@
+import"./ArticleForm.vue_vue_type_script_setup_true_lang.ae11d5ee.js";import{_}from"./ArticleForm.vue_vue_type_script_setup_true_lang.ae11d5ee.js";import"./app.e03ca4d4.js";/* empty css                     *//* empty css                       *//* empty css                    */export{_ as default};
