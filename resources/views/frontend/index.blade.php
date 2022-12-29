@@ -42,9 +42,6 @@
                             @foreach ($banners as $banner)
                                 <div class="item" style="background-image:url({{ $banner->thumbnail_src ?? '' }})">
                                 </div>
-                                <!-- item end-->
-                                <div class="item" style="background-image:url({{ $banner->thumbnail_src ?? '' }})">
-                                </div>
                             @endforeach
                         </div>
                         <!-- ts overlay style end-->
