@@ -45,7 +45,7 @@ import { Link } from "@inertiajs/inertia-vue3";
     border-right: solid 1px var(--el-menu-border-color);
 }
 img.logo_header {
-    width: 90%;
+    height: 50px;
     margin: 0 auto;
 }
 .user-side {

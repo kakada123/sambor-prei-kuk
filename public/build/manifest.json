@@ -29,7 +29,7 @@
       "resources/js/Pages/Welcome.vue"
     ],
     "css": [
-      "assets/app.ab356296.css"
+      "assets/app.6b7e6f21.css"
     ]
   },
   "resources/js/Pages/Article/ArticleForm.vue": {
@@ -447,13 +447,13 @@
     "file": "assets/Breadcrumb.9795a7ff.css",
     "src": "Breadcrumb.css"
   },
-  "MenuForm.css": {
-    "file": "assets/MenuForm.74c955e5.css",
-    "src": "MenuForm.css"
-  },
   "el-checkbox.css": {
     "file": "assets/el-checkbox.149c72a0.css",
     "src": "el-checkbox.css"
+  },
+  "MenuForm.css": {
+    "file": "assets/MenuForm.74c955e5.css",
+    "src": "MenuForm.css"
   },
   "el-tree-select.css": {
     "file": "assets/el-tree-select.9bf5017f.css",
@@ -468,7 +468,7 @@
     "src": "ArticleForm.css"
   },
   "resources/js/app.css": {
-    "file": "assets/app.ab356296.css",
+    "file": "assets/app.6b7e6f21.css",
     "src": "resources/js/app.css"
   }
 }
