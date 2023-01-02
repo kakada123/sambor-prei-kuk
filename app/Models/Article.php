@@ -104,7 +104,7 @@ class Article extends Model
     }
     public function getFullDescriptionAttribute()
     {
-        return Str::replace('../../storage/', asset('/'), $this->description ?? "");
+        return Str::replace('../../storage/', asset('/storage') . '/', $this->description ?? "");
     }
     public function getCreatedAtFormatAttribute()
     {

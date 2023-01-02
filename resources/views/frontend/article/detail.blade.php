@@ -95,25 +95,25 @@
                             </a>
                         </li>
                         <li class="d-none">
-                            <a href="javascript:void(0);">{{ $article->category?->name ?? '' }}</a>
+                            <a href="javascript:void(0);">{{ $articleDetail->category?->name ?? '' }}</a>
                         </li>
-                        <li><span class="default-font latest-breadcrumb">{{ $article->name ?? '' }}</span></li>
+                        <li><span class="default-font latest-breadcrumb">{{ $articleDetail->name ?? '' }}</span></li>
                     </ol>
                     <!-- breadcump end-->
                     <div class="content-wrapper">
                         <div class="entry-header">
-                            <h2 class="post-title lg">{{ $article->name ?? '' }}</h2>
+                            <h2 class="post-title lg">{{ $articleDetail->name ?? '' }}</h2>
                             <ul class="post-meta-info">
                                 <li>
                                     <i class="fa fa-clock-o"></i>
-                                    {{ $article->created_at_format ?? '' }}
+                                    {{ $articleDetail->created_at_format ?? '' }}
                                 </li>
                             </ul>
                         </div>
                         <!-- single post header end-->
                         <div class="post-content-area">
                             <div class="post-media post-featured-image entry-content">
-                                {!! $article->full_description ?? '' !!}
+                                {!! $articleDetail->full_description ?? '' !!}
                             </div>
                             <!-- entry content end-->
                         </div>

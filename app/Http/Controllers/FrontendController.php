@@ -45,14 +45,14 @@ class FrontendController extends Controller
      */
     public function articleDetail($slug)
     {
-        $article = Article::bySlug($slug)
+        $articleDetail = Article::bySlug($slug)
             ->active()
             ->first();
-        if ($article) {
-            $relatedArticles = Article::byArticleSlug($article?->category?->slug ?? "")
+        if ($articleDetail) {
+            $relatedArticles = Article::byArticleSlug($articleDetail?->category?->slug ?? "")
                 ->active()
                 ->orderBy('created_at', 'DESC')
-                ->whereNotIn('id', [$article->id ?? 0])
+                ->whereNotIn('id', [$articleDetail->id ?? 0])
                 ->paginate(12);
             //Process 
             $leftMenuCategory = Category::bySlug('structure-of-sambor-prei-kuk-national-authority')->first();
@@ -63,7 +63,7 @@ class FrontendController extends Controller
                 Article::byArticleSlug('left-articles-details')
                 ->homeArticles();
             return view('frontend/article/detail', compact(
-                'article',
+                'articleDetail',
                 'relatedArticles',
                 'leftMenus',
                 'leftArticlesDetail',
