@@ -435,7 +435,7 @@
     ]
   },
   "resources/sass/app.scss": {
-    "file": "assets/app.e1f2d415.css",
+    "file": "assets/app.6b16a386.css",
     "src": "resources/sass/app.scss",
     "isEntry": true
   },
@@ -451,21 +451,21 @@
     "file": "assets/MenuForm.74c955e5.css",
     "src": "MenuForm.css"
   },
-  "el-checkbox.css": {
-    "file": "assets/el-checkbox.149c72a0.css",
-    "src": "el-checkbox.css"
-  },
   "el-tree-select.css": {
     "file": "assets/el-tree-select.9bf5017f.css",
     "src": "el-tree-select.css"
   },
-  "ArticleForm.css": {
-    "file": "assets/ArticleForm.e199f971.css",
-    "src": "ArticleForm.css"
-  },
   "el-form-item.css": {
     "file": "assets/el-form-item.b726498b.css",
     "src": "el-form-item.css"
+  },
+  "el-checkbox.css": {
+    "file": "assets/el-checkbox.149c72a0.css",
+    "src": "el-checkbox.css"
+  },
+  "ArticleForm.css": {
+    "file": "assets/ArticleForm.e199f971.css",
+    "src": "ArticleForm.css"
   },
   "resources/js/app.css": {
     "file": "assets/app.645b1ed9.css",

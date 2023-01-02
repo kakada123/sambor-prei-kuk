@@ -13,3 +13,7 @@
         overflow: hidden !important;
     }
 }
+.el-tree-node__label {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
