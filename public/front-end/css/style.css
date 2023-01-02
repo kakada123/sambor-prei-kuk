@@ -39,8 +39,9 @@ body {
   overflow-x: hidden;
   font-size: 14px;
   line-height: 24px;
-  font-family: "Siemreap", "Helvetica Neue", !important;
+  font-family: "Siemreap", "Roboto", !important;
 }
+
 .body-color {
   background: #f0f1f4;
 }
@@ -152,6 +153,7 @@ section, .section {
 
 .section-bg {
   background: #f7f7f7;
+  padding: 0;
 }
 
 .pl-0 {
@@ -397,7 +399,6 @@ section, .section {
 .post-title.lg {
   font-size: 36px;
   margin-bottom: 17px;
-  line-height: 30px;
 }
 
 .post-title.ex-lg {
@@ -430,10 +431,6 @@ section, .section {
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
-  font-family: 'Koulen', 'Roboto';
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 23px;
 }
 
 .post-title a:hover {
@@ -873,13 +870,7 @@ blockquote cite:after {
   background: transparent;
   padding: 0;
 }
-.breaking-news-content marquee {
-  height: 25px;
-  color: #ffffff;
-}
-marquee p{
-  font-family: "Siemreap", "Helvetica Neue", !important;
-}
+
 .top-bar.v2 .ts-breaking-news .breaking-title {
   color: #fff;
 }
@@ -954,7 +945,7 @@ marquee p{
 .top-bar.v4 .ts-breaking-news {
   margin-bottom: 0;
   background: transparent;
-  padding: 8px 0;
+  padding: 5px 0;
 }
 
 .top-bar.v4 .ts-breaking-news .breaking-post-content p a {
@@ -1092,7 +1083,7 @@ marquee p{
   text-transform: uppercase;
   color: #004a93;
   font-weight: 700;
-  margin-bottom: 0;
+  margin: 0;
   line-height: 26px;
   padding-right: 10px;
 }
@@ -1183,7 +1174,7 @@ marquee p{
 
 .nav-menu > li > a {
   height: 60px;
-  padding: 22px 20px;
+  padding: 10px 12px;
   color: #232323;
   -o-transition: all 0.4s ease;
   transition: all 0.4s ease;
@@ -1218,6 +1209,8 @@ marquee p{
   font-weight: 700;
   height: 50px;
   padding: 16px 20px;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .nav-menu > li.focus > a {
@@ -1236,6 +1229,7 @@ marquee p{
 .nav-menu > li .nav-dropdown {
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  overflow: hidden;
 }
 
 .nav-menu > li .nav-dropdown li a {
@@ -3254,7 +3248,7 @@ img.sidebar-img {
 
 .post-featured-image img {
   width: 100%;
-  height: unset;
+  max-height: 550px;
 }
 
 .breadcrumb {
@@ -3270,7 +3264,6 @@ img.sidebar-img {
   padding: 7px 34px 7px 17px;
   color: #007bb6;
   position: relative;
-  font-family: "Siemreap", "Helvetica Neue", !important;
 }
 
 .breadcrumb li:before {
@@ -4187,12 +4180,8 @@ comments-form
   height: 100%;
   overflow: hidden;
   margin-bottom: 20px;
-  font-family: 'Siemreap', 'Roboto';
 }
-.ts-post-thumb.panel {
-  padding: 15px;
-  line-height: 30px;
-}
+
 .ts-post-thumb .post-cat {
   position: absolute;
   left: 0;
@@ -5369,7 +5358,7 @@ navbar-standerd
 }
 
 .navbar-standerd .navigation {
-  height: 80px;
+  height: 60px;
 }
 
 .navbar-standerd .navigation .nav-brand {
@@ -5377,7 +5366,7 @@ navbar-standerd
 }
 
 .navbar-standerd .nav-menu > li > a {
-  height: 80px;
+  height: 60px;
   line-height: 42px;
 }
 
@@ -5608,7 +5597,7 @@ navbar-standerd
 
 /*------------------ home default 5------------*/
 #featured-slider-5 .item {
-  min-height: 500px;
+  min-height: 350px;
 }
 
 #featured-slider-5 .item:hover:after {
@@ -6571,6 +6560,9 @@ featured tab personal blog
 .col-md-8 {
   padding: 0px 10px;
 }
+.col-lg-3.mt {
+  margin: 15px 0;
+}
 .post-title.tt {
   font-size: 16px;
   line-height: 26px;
@@ -6581,11 +6573,11 @@ p.content {
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 3;
-  font-family: "Siemreap", "Roboto";
-  font-size: 13px;
+  font-family: "Siemreap", "Roboto", !important;
+  font-size: 14px;
   -webkit-box-orient: vertical;
   margin-bottom: 0;
-  line-height: 28px;
+  /* text-align: justify; */
 }
 img.img-fluid {
   height: 100%;
@@ -6597,15 +6589,14 @@ img.img-fluid {
   text-align: center;
 }
 .title-color a {
-  color: #ffffff;
+  color: #fff;
+  font-size: 16px;
+  line-height: 25px;
+  font-weight: 100;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 1;
-  font-family: 'Siemreap', 'Roboto';
   -webkit-box-orient: vertical;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 22px;
 }
 .ts-box {
   position: relative;
@@ -6632,8 +6623,12 @@ img.img-fluid {
   right: 0;
 }
 img.borders {
+  margin: 0 auto;
+  display: block;
+  max-width: 100%;
   border-radius: 12px;
   border: 1px solid #a7daf3 !important;
+  width: 100%;
 }
 li.language {
   margin: 0px 5px;
@@ -6648,6 +6643,10 @@ li.pagess-search {
 
 input.form-control.border-radius {
   border-radius: 20px;
+  font-size: 14px;
+  padding: 6px 0 6px 20px;
+  margin-top: 5px;
+  width: 222px;
 }
 .entry-content p {
   color: #000;
@@ -6709,10 +6708,26 @@ img.height-img {
   width: auto;
   height: 40px;
 }
-.latest-breadcrumb{
-  display: inline-block;
-  width: 300px;
-  white-space: nowrap;
-  overflow: hidden !important;
-  text-overflow: ellipsis;
+.breaking-news-content marquee {
+  height: 25px;
+  color: #ffffff;
+}
+marquee p{
+  font-family: "Siemreap", "Roboto", !important;
+  font-size: 13px;
+}
+.fb-wrapper iframe {
+  left: 0;
+  top: 0;
+  height: 100% !important;
+  width: 100% !important;
+  position: absolute;
+}
+.ts-post-thumb {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  margin-bottom: 20px;
+  font-family: 'Siemreap', 'Roboto';
 }

@@ -29,7 +29,7 @@
                                     <a href="#">{{ $article->name ?? '' }}</a>
                                 </h3>
                             </div>
-                            <div class="ts-post-thumb panel">
+                            <div class="ts-post-thumb panel p-3">
                                 {!! $article->short_description ?? '' !!}
                                 <div class="btn-seemore">
                                     <a class="btn btn-color" href="{{ $article->link ?? 'javascript:void(0);' }}"

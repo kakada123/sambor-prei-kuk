@@ -32,7 +32,7 @@
 
     <!-- start block wrapper -->
     @if ($banners->count() > 0)
-        <section class="block-wrapper p-30"
+        <section class="block-wrapper"
             style="background: url({{ asset('front-end/images/banner-bg.png') }}) no-repeat center center/cover">
             <div class="container">
                 <div class="row">
@@ -55,7 +55,7 @@
         <div class="container">
             <div class="row">
                 @foreach ($underSliders as $article)
-                    <div class="col-lg-3">
+                    <div class="col-md-3 mb-1 mt-1">
                         <a href="{{ $article->link ?? '' }}">
                             <div class="text-feature">
                                 <p>{{ $article->name ?? '' }}</p>
@@ -89,9 +89,10 @@
                     @endforeach
                     <!-- ts overlay style end-->
                     <!-- ts-grid-box end-->
-                    <div class="fb-page" data-href="https://www.facebook.com/samborpreikukauthority?mibextid=zbwkwl"
-                        tabs="timeline" width="222" height="222" data-small-header="false"
-                        data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="false">
+                    <div class="fb-page fb-wrapper"
+                        data-href="https://www.facebook.com/samborpreikukauthority?mibextid=zbwkwl" tabs="timeline"
+                        height="300" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false"
+                        data-show-facepile="false">
                         <blockquote cite="https://www.facebook.com/samborpreikukauthority?mibextid=zbwkwl"
                             class="fb-xfbml-parse-ignore">
                             <a href="https://www.facebook.com/samborpreikukauthority?mibextid=zbwkwl">អាជ្ញាធរជាតិសំបូរព្រៃគុក

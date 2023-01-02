@@ -31,18 +31,18 @@
     <!-- slick -->
     <link rel="stylesheet" href="{{ asset('front-end/css/slick.css') }}">
     <!-- navigation -->
-    <link rel="stylesheet" href="{{ asset('front-end/css/navigation.css') }}">
+    <link rel="stylesheet" href="{{ asset('front-end/css/navigation.css') }}?v=1.0.1">
 
     <!-- magnific popup -->
     <link rel="stylesheet" href="{{ asset('front-end/css/magnific-popup.css') }}">
 
     <!-- Style -->
-    <link rel="stylesheet" href="{{ asset('front-end/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('front-end/css/style.css') }}?v=1.0.1">
 
     <link rel="stylesheet" href="{{ asset('front-end/css/colors/color-2.css') }}">
 
     <!-- Responsive -->
-    <link rel="stylesheet" href="{{ asset('front-end/css/responsive.css') }}">
+    <link rel="stylesheet" href="{{ asset('front-end/css/responsive.css') }}?v=1.0.1">
     <link rel="icon" href="{{ asset('front-end/images/icon.ico') }}" sizes="any">
 </head>
 
