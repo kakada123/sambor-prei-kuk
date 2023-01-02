@@ -1,5 +1,5 @@
 @extends('frontend/layout/master')
-@section('title', $article->name ?? '')
+@section('title', $articleDetail->name ?? '')
 @section('content')
     {{-- {!! $article->full_description ?? '' !!} --}}
     <!-- start blog wrapper -->
