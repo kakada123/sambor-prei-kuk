@@ -6,3 +6,10 @@
         min-height: calc(100vh - 255px);
     }
 }
+.data-table-content {
+    td {
+        max-width: 150px !important;
+        text-overflow: ellipsis !important;
+        overflow: hidden !important;
+    }
+}

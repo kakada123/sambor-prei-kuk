@@ -14,7 +14,7 @@
                 <span>{{ $t("app.Articles") }}</span>
             </div>
         </template>
-        <Table :resource="articles">
+        <Table :resource="articles" class="data-table-content">
             <template #cell(No)="{ item: article }">
                 {{ articles.data.findIndex((x) => x.id === article.id) + 1 }}
             </template>
