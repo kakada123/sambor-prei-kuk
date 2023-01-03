@@ -6,6 +6,8 @@ use App\Models\Article;
 use App\Models\Category;
 use App\Models\Menu;
 use Illuminate\Http\Request;
+use Analytics;
+use Spatie\Analytics\Period;
 
 class FrontendController extends Controller
 {
