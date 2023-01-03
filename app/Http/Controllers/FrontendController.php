@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Menu;
+use Illuminate\Http\Request;
+use Analytics;
+use Spatie\Analytics\Period;
 
 class FrontendController extends Controller
 {
@@ -30,8 +33,8 @@ class FrontendController extends Controller
             ->active()
             ->orderBy('created_at', 'DESC')->paginate(6);
         $banners = Article::byArticleSlug('banners')->homeArticles();
-        $todayVisitor = collect();
-        $sixMonths = collect();
+        $todayVisitor =  Analytics::fetchVisitorsAndPageViews(Period::days(1));
+        $sixMonths = Analytics::fetchVisitorsAndPageViews(Period::months(6));
         return view('frontend/index', compact(
             'underSliders',
             'leftArticles',
