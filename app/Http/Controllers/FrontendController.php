@@ -30,8 +30,8 @@ class FrontendController extends Controller
             ->active()
             ->orderBy('created_at', 'DESC')->paginate(6);
         $banners = Article::byArticleSlug('banners')->homeArticles();
-        $todayVisitor = [];
-        $sixMonths = [];
+        $todayVisitor = collect();
+        $sixMonths = collect();
         return view('frontend/index', compact(
             'underSliders',
             'leftArticles',
