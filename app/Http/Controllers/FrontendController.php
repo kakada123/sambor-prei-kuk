@@ -33,12 +33,16 @@ class FrontendController extends Controller
             ->active()
             ->orderBy('created_at', 'DESC')->paginate(6);
         $banners = Article::byArticleSlug('banners')->homeArticles();
+        $todayVisitor = Analytics::fetchVisitorsAndPageViews(Period::days(1));
+        $sixMonths = Analytics::fetchVisitorsAndPageViews(Period::months(6));
         return view('frontend/index', compact(
             'underSliders',
             'leftArticles',
             'rightArticles',
             'newsAndEvents',
-            'banners'
+            'banners',
+            'todayVisitor',
+            'sixMonths'
         ));
     }
     /**
