@@ -131,6 +131,18 @@
     <!-- smooth scroling -->
     <script src="{{ asset('front-end/js/smoothscroll.js') }}"></script>
     <script src="{{ asset('front-end/js/main.js') }}"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-252978346-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-252978346-1');
+    </script>
 </body>
 
 </html>
