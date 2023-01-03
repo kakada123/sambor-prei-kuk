@@ -171,7 +171,7 @@
                                         </li>
                                         <li>
                                             <a href="#">ចំនួនអ្នកទស្សនា ថ្ងៃនេះ
-                                                <span class="ts-blue-bg">{{ $todayVisitor->count() }} នាក់</span>
+                                                <span class="ts-blue-bg">{{ $todayVisitor?->count() ?? 0 }} នាក់</span>
                                             </a>
                                         </li>
                                         <li>
@@ -181,7 +181,7 @@
                                         </li>
                                         <li>
                                             <a href="#">ចំនួនអ្នកទស្សនា សរុប
-                                                <span class="ts-pink-bg">{{ $sixMonths->count() }} នាក់</span>
+                                                <span class="ts-pink-bg">{{ $sixMonths?->count() ?? 0 }} នាក់</span>
                                             </a>
                                         </li>
                                     </ul>
