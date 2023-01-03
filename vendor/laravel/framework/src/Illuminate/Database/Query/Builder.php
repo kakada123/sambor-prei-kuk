@@ -439,7 +439,7 @@ class Builder implements BuilderContract
     /**
      * Set the table which the query is targeting.
      *
-     * @param  \Closure|\Illuminate\Database\Query\Builder|string  $table
+     * @param  \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder|string  $table
      * @param  string|null  $as
      * @return $this
      */
@@ -1027,6 +1027,10 @@ class Builder implements BuilderContract
         }
 
         $this->wheres[] = compact('type', 'column', 'values', 'boolean');
+
+        if (count($values) !== count(Arr::flatten($values, 1))) {
+            throw new InvalidArgumentException('Nested arrays may not be passed to whereIn method.');
+        }
 
         // Finally, we'll add a binding for each value unless that value is an expression
         // in which case we will just skip over it since it will be the query as a raw
@@ -2273,7 +2277,7 @@ class Builder implements BuilderContract
     /**
      * Put the query's results in random order.
      *
-     * @param  string  $seed
+     * @param  string|int  $seed
      * @return $this
      */
     public function inRandomOrder($seed = '')
