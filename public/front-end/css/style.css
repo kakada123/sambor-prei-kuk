@@ -3246,7 +3246,7 @@ img.sidebar-img {
 }
 
 .post-featured-image img {
-  max-height: 100% !important;
+  height: auto !important;
   max-width: 100% !important;
 }
 
