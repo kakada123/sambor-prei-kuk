@@ -1,1 +1,0 @@
-import"./MenuForm.vue_vue_type_script_setup_true_lang.767e0f42.js";import{_}from"./MenuForm.vue_vue_type_script_setup_true_lang.767e0f42.js";import"./app.d0414564.js";/* empty css                     *//* empty css                       *//* empty css                    */export{_ as default};
