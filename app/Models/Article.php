@@ -74,7 +74,7 @@ class Article extends Model
     public function getThumbnailSrcAttribute()
     {
         if (Storage::disk('public')->exists($this->thumbnail ?? "") && $this->thumbnail !== null) {
-            return Storage::url($this->thumbnail);
+            return asset(Storage::url($this->thumbnail));
         }
         return asset("/assets/image/no-image.jpg");
     }

@@ -439,13 +439,13 @@
     "src": "resources/sass/app.scss",
     "isEntry": true
   },
-  "Breadcrumb.css": {
-    "file": "assets/Breadcrumb.9795a7ff.css",
-    "src": "Breadcrumb.css"
-  },
   "el-card.css": {
     "file": "assets/el-card.fc429ee1.css",
     "src": "el-card.css"
+  },
+  "Breadcrumb.css": {
+    "file": "assets/Breadcrumb.9795a7ff.css",
+    "src": "Breadcrumb.css"
   },
   "MenuForm.css": {
     "file": "assets/MenuForm.74c955e5.css",

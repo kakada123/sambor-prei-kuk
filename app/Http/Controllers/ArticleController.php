@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use App\Models\Language;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -88,7 +89,7 @@ class ArticleController extends Controller
                 if ($request->file('thumbnail')) {
                     $thumbnail = $request->file('thumbnail');
                     $ext = '.' . $thumbnail->getClientOriginalExtension();
-                    $fileName = str_replace($ext, date('d-m-Y-H-i') . $ext, $thumbnail->getClientOriginalName());
+                    $fileName = 'thumbnail-' . Carbon::now()->timestamp . $ext;
                     $path = $thumbnail->storeAs('uploads/articles', $fileName, 'public');
                 }
                 $form = (object)$request->form;
@@ -189,7 +190,7 @@ class ArticleController extends Controller
                 if ($request->file('thumbnail')) {
                     $thumbnail = $request->file('thumbnail');
                     $ext = '.' . $thumbnail->getClientOriginalExtension();
-                    $fileName = str_replace($ext, date('d-m-Y-H-i') . $ext, $thumbnail->getClientOriginalName());
+                    $fileName = 'thumbnail-' . Carbon::now()->timestamp . $ext;
                     $path = $thumbnail->storeAs('uploads/articles', $fileName, 'public');
                     $article->thumbnail = $path;
                 } elseif ($request->isRemoveImage) {
@@ -255,7 +256,7 @@ class ArticleController extends Controller
     {
         $image = $request->file('file');
         $ext = '.' . $image->getClientOriginalExtension();
-        $fileName = str_replace($ext, date('d-m-Y-H-i') . $ext, $image->getClientOriginalName());
+        $fileName = 'article-content-' . Carbon::now()->timestamp . $ext;
         $path = $request->file('file')->storeAs('uploads', $fileName, 'public');
         return response()->json([
             'location' => '/storage/' . $path
