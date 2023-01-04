@@ -67,10 +67,10 @@ class Menu extends Model
     {
         return $query->whereNull('parent_id')->orWhere('parent_id', 0);
     }
-    function parentCategories()
+    function parentMenus()
     {
-        $parentCategories = Menu::parent()->get();
-        return $parentCategories;
+        $parentMenus = Menu::parent()->get();
+        return $parentMenus;
     }
     public function children()
     {
@@ -116,5 +116,23 @@ class Menu extends Model
     public function article()
     {
         return $this->hasOne(Article::class, 'id', 'article_id');
+    }
+    public function parentMenu()
+    {
+        return $this->hasOne(Menu::class, 'parent_id', 'id');
+    }
+    public function parent()
+    {
+        return $this->hasOne(Menu::class, 'parent_id', 'id');
+    }
+    public function getTopParent($menu)
+    {
+        if ($menu->parent_id == null) {
+            return $menu->id;
+        }
+
+        $parent = Menu::find($menu->parent_id);
+
+        return $this->getTopParent($parent);
     }
 }

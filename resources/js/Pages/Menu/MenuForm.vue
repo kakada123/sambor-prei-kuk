@@ -133,7 +133,7 @@ const filterMethod = (value) => {
     );
 };
 // Data
-const defaultLang = "en";
+const defaultLang = "km";
 const activeName = ref(defaultLang);
 const store = useStore();
 const currentRoute = route().current();

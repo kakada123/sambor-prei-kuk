@@ -4,6 +4,7 @@ use App\Models\Article;
 use App\Models\Category;
 use App\Models\Language;
 use App\Models\Menu;
+use Illuminate\Support\Facades\Request;
 
 if (!function_exists('langs')) {
     function langs()
@@ -46,7 +47,8 @@ if (!function_exists('mainMenus')) {
                 'id'            => $menu->id,
                 'value'         => $menu->id,
                 'description'   => $menu->description,
-                'link'          => $menu->link ?? "#"
+                'link'          => $menu->link ?? "#",
+                'active'        => activeMenu($menu)
             ];
             if ($menu->activeChildren) {
                 foreach ($menu->activeChildren as $child) {
@@ -89,5 +91,27 @@ if (!function_exists('latestNews')) {
     function latestNews()
     {
         return Article::byArticleSlug('news-and-events')->orderBy('created_at', 'DESC')->active()->first();
+    }
+}
+
+if (!function_exists('activeMenu')) {
+    function activeMenu($theMenu)
+    {
+        $slug = Request('slug');
+        $article = Article::bySlug($slug)->first();
+        if ($article) {
+            $menu = Menu::where('article_id', $article->id)->first();
+            if ($menu) {
+                if ($menu->id === $theMenu->id ?? null) {
+                    return 'active';
+                } else {
+                    $topParent = $menu->getTopParent($menu);
+                    if ($theMenu->id === $topParent) {
+                        return 'active';
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

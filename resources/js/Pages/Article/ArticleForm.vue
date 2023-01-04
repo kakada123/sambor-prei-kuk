@@ -175,7 +175,7 @@ const filterMethod = (value) => {
         item.label.includes(value)
     );
 };
-const defaultLang = "en";
+const defaultLang = "km";
 const activeName = ref(defaultLang);
 const store = useStore();
 const labelPosition = ref("top");

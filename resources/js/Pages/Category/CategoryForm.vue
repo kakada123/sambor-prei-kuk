@@ -89,7 +89,7 @@ const category = computed(() => usePage().props.value.category);
 const categoryId = computed(() => store.getters["category/parent"]);
 const parentName = computed(() => store.getters["category/categoryName"]);
 // Data
-const defaultLang = "en";
+const defaultLang = "km";
 const activeName = ref(defaultLang);
 const store = useStore();
 const currentRoute = route().current();
