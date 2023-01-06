@@ -4,8 +4,7 @@ use App\Models\Article;
 use App\Models\Category;
 use App\Models\Language;
 use App\Models\Menu;
-// use Analytics as GoogleAnalytics;
-use Spatie\Analytics\AnalyticsFacade as Analytics;
+use Analytics as GoogleAnalytics;
 
 if (!function_exists('langs')) {
     function langs()
@@ -120,7 +119,7 @@ if (!function_exists('activeMenu')) {
 if (!function_exists('totalVisitor')) {
     function totalVisitor($period)
     {
-        $analyticsData = Analytics::performQuery(
+        $analyticsData = GoogleAnalytics::performQuery(
             $period,
             'ga:sessions',
             [
