@@ -6,7 +6,7 @@
                 <!--nav top end-->
                 <nav class="navigation ts-main-menu navigation-landscape">
                     <div class="nav-header">
-                        <a class="nav-brand" href="index-2.html">
+                        <a class="nav-brand" href="{{ route('home') }}">
                             <img src="{{ asset('assets/image/logo-white.jpg') }}" alt="">
                         </a>
                         <div class="nav-toggle"></div>
