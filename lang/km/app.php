@@ -42,4 +42,9 @@ return [
     'news_and_events' => 'ព័ត៌មាន និងព្រឹត្តិការណ៍',
     'related_articles' => 'អត្ថបទពាក់ព័ន្ធ',
     'read_more' => 'អានបន្ត',
+    'visitor' => 'នាក់',
+    'online_visitor' => 'ចំនួនអ្នកកំពុងទស្សនា',
+    'today_visitor' => 'ចំនួនអ្នកទស្សនា ថ្ងៃនេះ',
+    'yesterday_visitor' => 'ចំនួនអ្នកទស្សនា ថ្ងៃម្សិល',
+    'all_visitor' => 'ចំនួនអ្នកទស្សនា សរុប'
 ];

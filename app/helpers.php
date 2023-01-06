@@ -4,7 +4,8 @@ use App\Models\Article;
 use App\Models\Category;
 use App\Models\Language;
 use App\Models\Menu;
-use Illuminate\Support\Facades\Request;
+use Analytics as GoogleAnalytics;
+use Spatie\Analytics\Period;
 
 if (!function_exists('langs')) {
     function langs()
@@ -113,5 +114,20 @@ if (!function_exists('activeMenu')) {
             }
         }
         return false;
+    }
+}
+
+if (!function_exists('totalVisitor')) {
+    function totalVisitor($period)
+    {
+        $analyticsData = GoogleAnalytics::performQuery(
+            $period,
+            'ga:sessions',
+            [
+                'metrics' => 'ga:sessions, ga:pageviews',
+                'dimensions' => 'ga:yearMonth'
+            ]
+        );
+        return number_format($analyticsData?->totalsForAllResults['ga:sessions'] ?? 0);
     }
 }

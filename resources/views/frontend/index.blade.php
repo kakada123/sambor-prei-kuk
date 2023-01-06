@@ -161,33 +161,7 @@
                                     <a href="#">អ្នកទស្សនា</a>
                                 </h3>
                             </div>
-                            <div class="ts-post-thumb">
-                                <div class="widgets">
-                                    <ul class="category-list">
-                                        <li>
-                                            <a href="#">ចំនួនអ្នកកំពុងទស្សនា
-                                                <span class="ts-green-bg">1230 នាក់</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">ចំនួនអ្នកទស្សនា ថ្ងៃនេះ
-                                                <span class="ts-blue-bg">{{ $todayVisitor?->count() ?? 0 }} នាក់</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">ចំនួនអ្នកទស្សនា ថ្ងៃម្សិល
-                                                <span class="ts-yellow-bg">2410 នាក់</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">ចំនួនអ្នកទស្សនា សរុប
-                                                <span class="ts-pink-bg">{{ $sixMonths?->count() ?? 0 }} នាក់</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                            </div>
+                            @include('frontend/components/visitor/index')
                         </div>
                     </div>
                 </div>

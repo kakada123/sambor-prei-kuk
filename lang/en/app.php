@@ -41,5 +41,10 @@ return [
     'news' => 'News',
     'news_and_events' => 'News and events',
     'related_articles' => 'Related articles',
-    'read_more' => 'Read more'
+    'read_more' => 'Read more',
+    'visitor' => 'Visitor|Visitors',
+    'online_visitor' => 'Online Vistor',
+    'today_visitor' => 'Today Visitor',
+    'yesterday_visitor' => 'Yesterday Visitor',
+    'all_visitor' => 'All Visitor'
 ];
