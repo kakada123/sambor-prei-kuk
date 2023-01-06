@@ -100,8 +100,6 @@
                             <div class="most-populers owl-carousel">
                                 @foreach ($relatedArticles as $article)
                                     <div class="item">
-                                        <a class="post-cat ts-yellow-bg"
-                                            href="#">{{ $article->category?->name ?? '' }}</a>
                                         <div class="ts-post-thumb">
                                             <a href="{{ $article->link ?? '' }}">
                                                 <img class="img-fluid" src="{{ asset($article->thumbnail_src ?? '') }}"
