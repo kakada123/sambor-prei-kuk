@@ -1,1 +1,0 @@
-import{P as o,S as c,y as s,z as e,B as m,C as n,F as _,T as d}from"./app.9ecc61f7.js";import{_ as l}from"./_plugin-vue_export-helper.cdc0426e.js";const u={};function b(r,f){const t=o,a=c;return m(),s(a,{separator:"/"},{default:e(()=>[n(t,{to:{path:"/"}},{default:e(()=>[_("Home")]),_:1}),d(r.$slots,"default")]),_:3})}const i=l(u,[["render",b]]);export{i as B};

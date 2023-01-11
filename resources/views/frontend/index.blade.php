@@ -154,15 +154,7 @@
                             </div>
                         @endforeach
                         <!-- ts overlay style end-->
-                        <div class="ts-box ts-grid-content">
-
-                            <div class="head-color">
-                                <h3 class="title-color">
-                                    <a href="#">អ្នកទស្សនា</a>
-                                </h3>
-                            </div>
-                            @include('frontend/components/visitor/index')
-                        </div>
+                        @include('frontend/components/visitor/index')
                     </div>
                 </div>
                 <!--col end-->
