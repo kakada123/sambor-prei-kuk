@@ -80,8 +80,10 @@ class Article extends Model
     }
     public function scopeByArticleSlug($query, $slug)
     {
-        $categoryId = Category::bySlug($slug)->pluck('id');
-        return $query->where('category_id', $categoryId ?? null);
+        $category = Category::bySlug($slug)->first();
+        if ($category) {
+            return $query->where('category_id', $category->id ?? null);
+        }
     }
     public function getShortDescriptionAttribute()
     {
