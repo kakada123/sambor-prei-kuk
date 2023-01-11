@@ -47,5 +47,5 @@ return [
     'today_visitor' => 'Today Visitor',
     'yesterday_visitor' => 'Yesterday Visitor',
     'all_visitor' => 'All Visitor',
-    'the_visitor' => 'The Visitor'
+    'the_visitor' => 'Visitor'
 ];
