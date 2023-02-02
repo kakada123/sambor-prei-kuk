@@ -90,7 +90,7 @@ if (!function_exists('childMenu')) {
 if (!function_exists('latestNews')) {
     function latestNews()
     {
-        return Article::byArticleSlug('news-and-events')->orderBy('created_at', 'DESC')->active()->first();
+        return Article::byArticleSlug('news-and-events')->orderBy('updated_at', 'DESC')->active()->first();
     }
 }
 

@@ -46,6 +46,9 @@ class WorkstationConfig extends \Google\Collection
    * @var string
    */
   public $displayName;
+  protected $encryptionKeyType = CustomerEncryptionKey::class;
+  protected $encryptionKeyDataType = '';
+  public $encryptionKey;
   /**
    * @var string
    */
@@ -57,6 +60,10 @@ class WorkstationConfig extends \Google\Collection
    * @var string
    */
   public $idleTimeout;
+  /**
+   * @var string[]
+   */
+  public $labels;
   /**
    * @var string
    */
@@ -180,6 +187,20 @@ class WorkstationConfig extends \Google\Collection
     return $this->displayName;
   }
   /**
+   * @param CustomerEncryptionKey
+   */
+  public function setEncryptionKey(CustomerEncryptionKey $encryptionKey)
+  {
+    $this->encryptionKey = $encryptionKey;
+  }
+  /**
+   * @return CustomerEncryptionKey
+   */
+  public function getEncryptionKey()
+  {
+    return $this->encryptionKey;
+  }
+  /**
    * @param string
    */
   public function setEtag($etag)
@@ -220,6 +241,20 @@ class WorkstationConfig extends \Google\Collection
   public function getIdleTimeout()
   {
     return $this->idleTimeout;
+  }
+  /**
+   * @param string[]
+   */
+  public function setLabels($labels)
+  {
+    $this->labels = $labels;
+  }
+  /**
+   * @return string[]
+   */
+  public function getLabels()
+  {
+    return $this->labels;
   }
   /**
    * @param string
