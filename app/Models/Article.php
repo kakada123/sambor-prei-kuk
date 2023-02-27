@@ -33,45 +33,30 @@ class Article extends Model
         'thumbnail_src'
     ];
 
-    public function content()
-    {
-        $locale = App::getLocale();
-
-        $lang = Cache::rememberForever('language_' . $locale, function () use ($locale) {
-            return Language::byLocale($locale)->firstOrFail();
-        });
-
-        return $this->hasOne(ArticleContent::class, 'article_id', 'id')
-            ->where('lang_id', $lang->id);
-    }
-
     public function getNameAttribute()
     {
-        if (!empty($this->content) && !empty($this->content->name)) {
-            return $this->content->name;
-        }
-
-        $content = $this->hasOne(ArticleContent::class, 'article_id', 'id')
-            ->whereNotNull('name')
-            ->where('name', '<>', '')
-            ->first();
-
-        return $content?->name ?? '';
+        $content = $this->content;
+        return $content ? $content->name : '';
     }
 
     public function getDescriptionAttribute()
     {
         $content = $this->content;
-        if (!empty($content) && !empty($content->desc)) {
-            return $content->desc;
-        }
-        $content = ArticleContent::where('article_id', $this->id)
-            ->whereNotNull('desc')
-            ->where('desc', '<>', '')
-            ->first();
         return $content ? $content->desc : '';
     }
 
+    public function content()
+    {
+        $locale = App::getLocale();
+
+        return $this->hasOne(ArticleContent::class, 'article_id', 'id')
+            ->where('lang_id', function ($query) use ($locale) {
+                $query->select('id')
+                    ->from('languages')
+                    ->where('locale', $locale)
+                    ->limit(1);
+            });
+    }
 
     public function getCategoryNameAttribute()
     {

@@ -30,42 +30,45 @@ class Menu extends Model
     {
         $locale = App::getLocale();
 
-        $lang = Cache::rememberForever('language_' . $locale, function () use ($locale) {
-            return Language::byLocale($locale)->firstOrFail();
-        });
-
-        return $this->hasOne(MenuContent::class, 'menu_id', 'id')->where('lang_id', $lang->id ?? null);
+        return $this->hasOne(MenuContent::class, 'menu_id', 'id')
+            ->where('lang_id', function ($query) use ($locale) {
+                $query->select('id')
+                    ->from('languages')
+                    ->where('locale', $locale)
+                    ->limit(1);
+            });
     }
 
     function getNameAttribute()
     {
         $content = $this->content;
-        if ($content) {
-            if ($content->name !== "") {
-                return $content->name ?? "";
-            }
-        }
-        $content = $this->hasOne(MenuContent::class, 'menu_id', 'id')
-            ->whereNotNull('name')
-            ->where('name', '<>', '')
-            ->first();
-        return $content->name ?? "";
+
+        return $content ? ($content->name ?: $this->fallbackName()) : "";
     }
 
     function getDescriptionAttribute()
     {
         $content = $this->content;
-        if ($content) {
-            if ($content->description !== "") {
-                return $content->description ?? "";
-            }
-        }
-        $content = $this->hasOne(MenuContent::class, 'menu_id', 'id')
+
+        return $content ? ($content->description ?: $this->fallbackDescription()) : "";
+    }
+
+    function fallbackName()
+    {
+        return $this->hasOne(MenuContent::class, 'menu_id', 'id')
+            ->whereNotNull('name')
+            ->where('name', '<>', '')
+            ->value('name') ?? "";
+    }
+
+    function fallbackDescription()
+    {
+        return $this->hasOne(MenuContent::class, 'menu_id', 'id')
             ->whereNotNull('description')
             ->where('description', '<>', '')
-            ->first();
-        return $content->description ?? "";
+            ->value('description') ?? "";
     }
+
 
     public function scopeByType($query, $menuType)
     {
