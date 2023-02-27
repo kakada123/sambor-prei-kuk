@@ -1,5 +1,5 @@
 <!-- nav menu start-->
-@php($menus = mainMenus())
+@php($menus = getMainMenus())
 <ul class="nav-menu">
     <li class="{{ Route::currentRouteName() === 'home' ? 'active' : '' }}">
         <a href="{{ route('home') }}">@lang('app.home')</a>

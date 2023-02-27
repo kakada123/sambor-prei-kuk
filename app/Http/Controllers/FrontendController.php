@@ -21,73 +21,85 @@ class FrontendController extends Controller
      */
     public function index()
     {
-        $underSliders = Article::byArticleSlug('under-slider-articles')
-            ->homeArticles();
-        $leftArticles = Article::byArticleSlug('left-articles')
-            ->homeArticles();
-        $rightArticles = Article::byArticleSlug('right-articles')
-            ->homeArticles();
-        $newsAndEvents =  Article::byArticleSlug('news-and-events')
+        // Get home page articles
+        $slugs = ['under-slider-articles', 'left-articles', 'right-articles', 'banners'];
+
+        $articles = Article::whereIn('slug', $slugs)
+            ->homeArticles()
+            ->get()
+            ->groupBy('slug');
+
+        $sliders = $articles['under-slider-articles'] ?? collect();
+        $leftArticles = $articles['left-articles'] ?? collect();
+        $rightArticles = $articles['right-articles'] ?? collect();
+        $banners = $articles['banners'] ?? collect();
+
+        // Get recent news and events
+        $events = Article::byArticleSlug('news-and-events')
             ->orderBy('order', 'ASC')
             ->take(4)
             ->active()
-            ->orderBy('created_at', 'DESC')->paginate(6);
-        $banners = Article::byArticleSlug('banners')->homeArticles();
-        $todayVisitor =  totalVisitor(Period::days(1));
+            ->orderBy('created_at', 'DESC')
+            ->paginate(6);
+
+        // Get visitor statistics
+        $todayVisitors = totalVisitor(Period::days(1));
+        $sixMonthsVisitors = totalVisitor(Period::months(6));
+        $yesterdayVisitors = totalVisitor(Period::create(Carbon::yesterday(), Carbon::yesterday()));
+        $onlineVisitors = totalVisitor(Period::create(Carbon::now(), Carbon::now()));
+
+        return view('frontend/index', compact(
+            'sliders',
+            'leftArticles',
+            'rightArticles',
+            'events',
+            'banners',
+            'todayVisitors',
+            'sixMonthsVisitors',
+            'yesterdayVisitors',
+            'onlineVisitors'
+        ));
+    }
+
+    public function articleDetail($slug)
+    {
+        $articleDetail = Article::with('category')
+            ->bySlug($slug)
+            ->active()
+            ->firstOrFail();
+
+        $relatedArticles = Article::with('category')
+            ->byArticleSlug($articleDetail->category->slug ?? "")
+            ->active()
+            ->orderBy('created_at', 'DESC')
+            ->whereNotIn('id', [$articleDetail->id ?? 0])
+            ->paginate(12);
+
+        $leftMenuCategory = Category::bySlug('structure-of-sambor-prei-kuk-national-authority')->firstOrFail();
+
+        $leftMenus = Menu::byType('left-menu')
+            ->orderBy('id', 'ASC')
+            ->get();
+
+        $leftArticlesDetail = Article::byArticleSlug('left-articles-details')
+            ->homeArticles()
+            ->get();
+
+        $todayVisitor = totalVisitor(Period::days(1));
         $sixMonths = totalVisitor(Period::months(6));
         $yesterDay = totalVisitor(Period::create(Carbon::yesterday(), Carbon::yesterday()));
         $online = totalVisitor(Period::create(Carbon::now(), Carbon::now()));
-        return view('frontend/index', compact(
-            'underSliders',
-            'leftArticles',
-            'rightArticles',
-            'newsAndEvents',
-            'banners',
+
+        return view('frontend/article/detail', compact(
+            'articleDetail',
+            'relatedArticles',
+            'leftMenus',
+            'leftArticlesDetail',
+            'leftMenuCategory',
             'todayVisitor',
             'sixMonths',
             'yesterDay',
             'online'
         ));
-    }
-    /**
-     * Artcile Detail
-     * @param mixed $slug
-     */
-    public function articleDetail($slug)
-    {
-        $articleDetail = Article::bySlug($slug)
-            ->active()
-            ->first();
-        if ($articleDetail) {
-            $relatedArticles = Article::byArticleSlug($articleDetail?->category?->slug ?? "")
-                ->active()
-                ->orderBy('created_at', 'DESC')
-                ->whereNotIn('id', [$articleDetail->id ?? 0])
-                ->paginate(12);
-            //Process 
-            $leftMenuCategory = Category::bySlug('structure-of-sambor-prei-kuk-national-authority')->first();
-            $leftMenus =
-                Menu::byType('left-menu')
-                ->orderBy('id', 'ASC')->get();
-            $leftArticlesDetail =
-                Article::byArticleSlug('left-articles-details')
-                ->homeArticles();
-            $todayVisitor =  totalVisitor(Period::days(1));
-            $sixMonths = totalVisitor(Period::months(6));
-            $yesterDay = totalVisitor(Period::create(Carbon::yesterday(), Carbon::yesterday()));
-            $online = totalVisitor(Period::create(Carbon::now(), Carbon::now()));
-            return view('frontend/article/detail', compact(
-                'articleDetail',
-                'relatedArticles',
-                'leftMenus',
-                'leftArticlesDetail',
-                'leftMenuCategory',
-                'todayVisitor',
-                'sixMonths',
-                'yesterDay',
-                'online'
-            ));
-        }
-        abort(404);
     }
 }

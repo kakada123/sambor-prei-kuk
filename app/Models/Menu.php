@@ -6,12 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
-use PhpParser\Node\Stmt\Catch_;
+use Illuminate\Support\Facades\Cache;
 
 class Menu extends Model
 {
     use HasFactory;
-    use HasFactory;
+    use SoftDeletes;
+
     protected $fillable = [
         'category_id',
         'type',
@@ -25,12 +26,17 @@ class Menu extends Model
         'created_by',
         'updated_by'
     ];
-    use SoftDeletes;
     function content()
     {
-        $lang = Language::byLocale(App::getLocale())->first();
+        $locale = App::getLocale();
+
+        $lang = Cache::rememberForever('language_' . $locale, function () use ($locale) {
+            return Language::byLocale($locale)->firstOrFail();
+        });
+
         return $this->hasOne(MenuContent::class, 'menu_id', 'id')->where('lang_id', $lang->id ?? null);
     }
+
     function getNameAttribute()
     {
         $content = $this->content;
@@ -45,6 +51,7 @@ class Menu extends Model
             ->first();
         return $content->name ?? "";
     }
+
     function getDescriptionAttribute()
     {
         $content = $this->content;
@@ -59,31 +66,38 @@ class Menu extends Model
             ->first();
         return $content->description ?? "";
     }
+
     public function scopeByType($query, $menuType)
     {
         return $query->where('type', $menuType);
     }
+
     function scopeParent($query)
     {
         return $query->whereNull('parent_id')->orWhere('parent_id', 0);
     }
+
     function parentMenus()
     {
         $parentMenus = Menu::parent()->get();
         return $parentMenus;
     }
+
     public function children()
     {
         return $this->hasMany(Menu::class, 'parent_id', 'id')->with('children')->orderBy('order', 'ASC');
     }
+
     public function scopeActive($query)
     {
         return $query->where('status', 1);
     }
+
     public function activeChildren()
     {
         return $this->children()->active();
     }
+
     public function getLinkAttribute()
     {
         if ($this->isCategoryMenu()) {
@@ -95,6 +109,7 @@ class Menu extends Model
         }
         return "javascript:void(0);";
     }
+
     public function isCategoryMenu()
     {
         if ($this->category && $this->isArticleMenu() === false) {
@@ -102,6 +117,7 @@ class Menu extends Model
         }
         return false;
     }
+
     public function isArticleMenu()
     {
         if ($this->article) {
@@ -109,22 +125,27 @@ class Menu extends Model
         }
         return false;
     }
+
     public function category()
     {
         return $this->hasOne(Category::class, 'id', 'category_id');
     }
+
     public function article()
     {
         return $this->hasOne(Article::class, 'id', 'article_id');
     }
+
     public function parentMenu()
     {
         return $this->hasOne(Menu::class, 'parent_id', 'id');
     }
+
     public function parent()
     {
         return $this->hasOne(Menu::class, 'parent_id', 'id');
     }
+
     public function getTopParent($menu)
     {
         if ($menu->parent_id == null) {

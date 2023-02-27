@@ -14,7 +14,7 @@
                         <div class="breaking-news-content float-left">
                             <marquee width="100%" direction="left" height="100px" onmouseover="this.stop();"
                                 onmouseout="this.start();">
-                                <p>{{ latestNews()->short_description ?? '' }}</p>
+                                <p>{{ getLatestNews()->short_description ?? '' }}</p>
                             </marquee>
                         </div>
                     </div>
@@ -54,7 +54,7 @@
     <section class="section-bg">
         <div class="container">
             <div class="row">
-                @foreach ($underSliders as $article)
+                @foreach ($sliders as $article)
                     <div class="col-md-3 mb-1 mt-1">
                         <a href="{{ $article->link ?? '' }}">
                             <div class="text-feature">
@@ -108,7 +108,7 @@
                         </h2>
                     </div>
                     <div class="post-list">
-                        @foreach ($newsAndEvents as $article)
+                        @foreach ($events as $article)
                             <div class="row mb-10 shadow-post">
                                 <div class="col-md-4 item">
                                     <div class="ts-post-thumb">
@@ -133,7 +133,7 @@
                         @endforeach
                     </div>
                     <!-- row end-->
-                    {{ $newsAndEvents->links('pagination::bootstrap-5') }}
+                    {{ $events->links('pagination::bootstrap-5') }}
                     <!-- Featured owl carousel end-->
                 </div>
                 <!-- col end-->

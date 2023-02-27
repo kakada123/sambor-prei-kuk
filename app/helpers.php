@@ -17,57 +17,66 @@ if (!function_exists('langs')) {
     }
 }
 if (!function_exists('categories')) {
-    function categories()
+    function getCategories()
     {
         $categories = [];
-        $parentsCategories = Category::parent()->get();
-        foreach ($parentsCategories as $parentCategory) {
-            $childs = $parentCategory->children;
-            foreach ($childs as $childs) {
+        $parentCategories = Category::parent()->get();
+        foreach ($parentCategories as $parentCategory) {
+            foreach ($parentCategory->children as $child) {
                 $categories[] = [
-                    'id'    => $parentCategory->id,
-                    'name' => $parentCategory->name,
+                    'id' => $child->id,
+                    'name' => $child->name,
                 ];
             }
         }
+        return $categories;
     }
 }
 
-if (!function_exists('mainMenus')) {
-    function mainMenus()
+if (!function_exists('getMainMenus')) {
+    function getMainMenus()
     {
         $menus = Menu::orderBy('order', 'ASC')->byType('main-menu')
             ->active()
             ->parent()
             ->get();
-        $theMenus = [];
+
+        $result = [];
+
         foreach ($menus as $menu) {
-            $theMenus[$menu->id] = [
+            $menuArray = [
                 'label'         => $menu->name,
                 'id'            => $menu->id,
                 'value'         => $menu->id,
                 'description'   => $menu->description,
                 'link'          => $menu->link ?? "#",
-                'active'        => activeMenu($menu)
+                'active'        => isActiveMenu($menu),
+                'children'      => []
             ];
+
             if ($menu->activeChildren) {
                 foreach ($menu->activeChildren as $child) {
-                    $theMenus[$menu->id]['children'][] = [
+                    $childArray = [
                         'label'         => $child->name,
                         'id'            => $child->id,
                         'value'         => $child->id,
                         'description'   => $child->description,
-                        'children'      => childMenu($child),
-                        'link'          => $child->link ?? "#"
+                        'link'          => $child->link ?? "#",
+                        'children'      => getChildMenu($child),
                     ];
+
+                    $menuArray['children'][] = $childArray;
                 }
             }
+
+            $result[] = $menuArray;
         }
-        return collect(array_values($theMenus));
+
+        return collect($result);
     }
 }
-if (!function_exists('childMenu')) {
-    function childMenu($menu)
+if (!function_exists('getChildMenu')) {
+    function getChildMenu($menu)
     {
         $subMenus = [];
         if ($menu->activeChildren) {
@@ -77,41 +86,40 @@ if (!function_exists('childMenu')) {
                     'id'            => $child->id,
                     'value'         => $child->id,
                     'description'   => $child->description,
-                    'children'      => childMenu($child),
+                    'children'      => getChildMenu($child),
                     'link'          => $child->link ?? "javascript:void(0)"
                 ];
-                collect(childMenu($child));
             }
-            return collect(array_values($subMenus));
         }
+        return collect($subMenus);
     }
 }
 
-if (!function_exists('latestNews')) {
-    function latestNews()
+if (!function_exists('getLatestNews')) {
+    function getLatestNews()
     {
-        return Article::byArticleSlug('news-and-events')->orderBy('updated_at', 'DESC')->active()->first();
+        return Article::where('slug', 'news-and-events')
+            ->active()
+            ->orderByDesc('updated_at')
+            ->first();
     }
 }
 
-if (!function_exists('activeMenu')) {
-    function activeMenu($theMenu)
+if (!function_exists('isActiveMenu')) {
+    function isActiveMenu($menu)
     {
-        $slug = Request('slug');
-        $article = Article::bySlug($slug)->first();
-        if ($article) {
-            $menu = Menu::where('article_id', $article->id)->first();
-            if ($menu) {
-                if ($menu->id === $theMenu->id ?? null) {
-                    return 'active';
-                } else {
-                    $topParent = $menu->getTopParent($menu);
-                    if ($theMenu->id === $topParent) {
-                        return 'active';
-                    }
-                }
+        $slug = request('slug');
+        $article = Article::where('slug', $slug)->first();
+
+        if ($article && $article->menu) {
+            $articleMenu = $article->menu;
+            $topParent = $articleMenu->getTopParent($articleMenu);
+
+            if ($articleMenu->id === $menu->id || $menu->id === $topParent) {
+                return 'active';
             }
         }
+
         return false;
     }
 }
@@ -127,6 +135,9 @@ if (!function_exists('totalVisitor')) {
                 'dimensions' => 'ga:yearMonth'
             ]
         );
-        return number_format($analyticsData?->totalsForAllResults['ga:sessions'] ?? 0);
+
+        $totalSessions = $analyticsData?->totalsForAllResults['ga:sessions'] ?? 0;
+
+        return number_format($totalSessions);
     }
 }
