@@ -26,7 +26,19 @@ class Menu extends Model
         'created_by',
         'updated_by'
     ];
-    function content()
+    public function getNameAttribute()
+    {
+        $content = $this->content;
+        return $content ? $content->name : '';
+    }
+
+    public function getDescriptionAttribute()
+    {
+        $content = $this->content;
+        return $content ? $content->desc : '';
+    }
+
+    public function content()
     {
         $locale = App::getLocale();
 
@@ -37,36 +49,6 @@ class Menu extends Model
                     ->where('locale', $locale)
                     ->limit(1);
             });
-    }
-
-    function getNameAttribute()
-    {
-        $content = $this->content;
-
-        return $content ? ($content->name ?: $this->fallbackName()) : "";
-    }
-
-    function getDescriptionAttribute()
-    {
-        $content = $this->content;
-
-        return $content ? ($content->description ?: $this->fallbackDescription()) : "";
-    }
-
-    function fallbackName()
-    {
-        return $this->hasOne(MenuContent::class, 'menu_id', 'id')
-            ->whereNotNull('name')
-            ->where('name', '<>', '')
-            ->value('name') ?? "";
-    }
-
-    function fallbackDescription()
-    {
-        return $this->hasOne(MenuContent::class, 'menu_id', 'id')
-            ->whereNotNull('description')
-            ->where('description', '<>', '')
-            ->value('description') ?? "";
     }
 
 
