@@ -439,17 +439,13 @@
     "src": "resources/sass/app.scss",
     "isEntry": true
   },
-  "el-card.css": {
-    "file": "assets/el-card.fc429ee1.css",
-    "src": "el-card.css"
-  },
   "Breadcrumb.css": {
     "file": "assets/Breadcrumb.9795a7ff.css",
     "src": "Breadcrumb.css"
   },
-  "el-tree-select.css": {
-    "file": "assets/el-tree-select.9bf5017f.css",
-    "src": "el-tree-select.css"
+  "el-card.css": {
+    "file": "assets/el-card.fc429ee1.css",
+    "src": "el-card.css"
   },
   "MenuForm.css": {
     "file": "assets/MenuForm.74c955e5.css",
@@ -458,6 +454,10 @@
   "el-checkbox.css": {
     "file": "assets/el-checkbox.149c72a0.css",
     "src": "el-checkbox.css"
+  },
+  "el-tree-select.css": {
+    "file": "assets/el-tree-select.9bf5017f.css",
+    "src": "el-tree-select.css"
   },
   "el-form-item.css": {
     "file": "assets/el-form-item.b726498b.css",
