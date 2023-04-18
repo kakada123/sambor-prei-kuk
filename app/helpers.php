@@ -98,7 +98,7 @@ if (!function_exists('getChildMenu')) {
 if (!function_exists('getLatestNews')) {
     function getLatestNews()
     {
-        return Article::where('slug', 'news-and-events')
+        return Article::byArticleSlug('news-and-events')
             ->active()
             ->orderByDesc('updated_at')
             ->first();
