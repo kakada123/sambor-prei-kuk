@@ -250,6 +250,9 @@ class MenuController extends Controller
         $menu->deleted_by = Auth::user()->id;
         $menu->save();
         $menu->delete();
+
+        // Clear Menu Caches
+        $this->clearMenusCache();
         return redirect()->route('menu.show', $menu->type ?? "");
     }
     public function getMenu($menuType)

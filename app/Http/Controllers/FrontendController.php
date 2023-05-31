@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Models\Menu;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Analytics\Period;
 
 class FrontendController extends Controller
@@ -21,30 +23,47 @@ class FrontendController extends Controller
      */
     public function index()
     {
-        $slugs = ['under-slider-articles', 'left-articles', 'right-articles', 'banners'];
+        $locale = App::getLocale();
+        // Check if the articles data is already cached
+        if (Cache::has('articles_data_' . $locale)) {
+            $articles = Cache::get('articles_data_' . $locale);
+        } else {
+            $slugs = ['under-slider-articles', 'left-articles', 'right-articles', 'banners'];
 
-        $articles = Article::whereHas('category', function ($query) use ($slugs) {
-            $query->whereIn('slug', $slugs);
-        })
-            ->with('category')
-            ->get()
-            ->groupBy(function ($article) {
-                return $article->category->slug;
-            });
+            $articles = Article::whereHas('category', function ($query) use ($slugs) {
+                $query->whereIn('slug', $slugs);
+            })
+                ->with('category')
+                ->get()
+                ->groupBy(function ($article) {
+                    return $article->category->slug;
+                });
 
+            // Cache the articles data forever
+            Cache::forever('articles_data_' . $locale, $articles);
+        }
+
+        // Check if the events data is already cached
+        if (Cache::has('events_data_' . $locale)) {
+            $events = Cache::get('events_data_' . $locale);
+        } else {
+            $events = Article::byArticleSlug('news-and-events')
+                ->orderBy('order', 'ASC')
+                ->take(4)
+                ->active()
+                ->orderBy('created_at', 'DESC')
+                ->paginate(6);
+
+            // Cache the events data forever
+            Cache::forever('events_data_' . $locale, $events);
+        }
+
+        // Retrieve the specific article categories from the cached data
         $sliders = $articles['under-slider-articles'] ?? collect();
         $leftArticles = $articles['left-articles'] ?? collect();
         $rightArticles = $articles['right-articles'] ?? collect();
         $banners = $articles['banners'] ?? collect();
 
-
-        // Get recent news and events
-        $events = Article::byArticleSlug('news-and-events')
-            ->orderBy('order', 'ASC')
-            ->take(4)
-            ->active()
-            ->orderBy('created_at', 'DESC')
-            ->paginate(6);
 
         // Get visitor statistics
         $todayVisitors = totalVisitor(Period::days(1));
