@@ -21,18 +21,22 @@ class FrontendController extends Controller
      */
     public function index()
     {
-        // Get home page articles
         $slugs = ['under-slider-articles', 'left-articles', 'right-articles', 'banners'];
 
-        $articles = Article::whereIn('slug', $slugs)
-            ->homeArticles()
+        $articles = Article::whereHas('category', function ($query) use ($slugs) {
+            $query->whereIn('slug', $slugs);
+        })
+            ->with('category')
             ->get()
-            ->groupBy('slug');
+            ->groupBy(function ($article) {
+                return $article->category->slug;
+            });
 
         $sliders = $articles['under-slider-articles'] ?? collect();
         $leftArticles = $articles['left-articles'] ?? collect();
         $rightArticles = $articles['right-articles'] ?? collect();
         $banners = $articles['banners'] ?? collect();
+
 
         // Get recent news and events
         $events = Article::byArticleSlug('news-and-events')
