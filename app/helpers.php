@@ -5,6 +5,8 @@ use App\Models\Category;
 use App\Models\Language;
 use App\Models\Menu;
 use Analytics as GoogleAnalytics;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
 
 if (!function_exists('langs')) {
     function langs()
@@ -34,9 +36,20 @@ if (!function_exists('categories')) {
 }
 
 if (!function_exists('getMainMenus')) {
+
+
     function getMainMenus()
     {
-        $menus = Menu::orderBy('order', 'ASC')->byType('main-menu')
+        $locale = App::getLocale();
+        $cacheKey = 'main_menus_' . $locale;
+        $cachedMenus = Cache::get($cacheKey);
+
+        if ($cachedMenus) {
+            return $cachedMenus;
+        }
+
+        $menus = Menu::orderBy('order', 'ASC')
+            ->byType('main-menu')
             ->active()
             ->parent()
             ->get();
@@ -72,7 +85,11 @@ if (!function_exists('getMainMenus')) {
             $result[] = $menuArray;
         }
 
-        return collect($result);
+        $cachedMenus = collect($result);
+
+        Cache::forever($cacheKey, $cachedMenus);
+
+        return $cachedMenus;
     }
 }
 if (!function_exists('getChildMenu')) {

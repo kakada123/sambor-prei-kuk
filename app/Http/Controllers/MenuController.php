@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use App\Models\Language;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -113,6 +114,8 @@ class MenuController extends Controller
                     }
                 }
             });
+            // Clear Menu Caches
+            $this->clearMenusCache();
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', __('app.created_fail'));;
         }
@@ -228,6 +231,8 @@ class MenuController extends Controller
                     }
                 }
             });
+            // Clear Menu Caches
+            $this->clearMenusCache();
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', __('app.created_fail'));;
         }
@@ -287,6 +292,15 @@ class MenuController extends Controller
                 Self::childMenu($child);
             }
             return array_values($subMenus);
+        }
+    }
+
+    private function clearMenusCache()
+    {
+        $langs = langs();
+        foreach ($langs as $lang) {
+            $cacheKey = 'main_menus_' . $lang->locale;
+            Cache::forget($cacheKey);
         }
     }
 }

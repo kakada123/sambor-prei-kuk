@@ -3,22 +3,13 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'cf51509170d2c90b3d2a9a944a2ac22440e7647f',
+        'reference' => '6f5c8186a2b65a4a0e1c7fef89daf9aecd451b57',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
         'dev' => true,
     ),
     'versions' => array(
-        'barryvdh/laravel-debugbar' => array(
-            'pretty_version' => 'v3.8.1',
-            'version' => '3.8.1.0',
-            'reference' => 'aff3235fecb4104203b1e62c32239c56530eee32',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../barryvdh/laravel-debugbar',
-            'aliases' => array(),
-            'dev_requirement' => true,
-        ),
         'brick/math' => array(
             'pretty_version' => '0.11.0',
             'version' => '0.11.0.0',
@@ -430,7 +421,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'cf51509170d2c90b3d2a9a944a2ac22440e7647f',
+            'reference' => '6f5c8186a2b65a4a0e1c7fef89daf9aecd451b57',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -516,15 +507,6 @@
             'install_path' => __DIR__ . '/../league/mime-type-detection',
             'aliases' => array(),
             'dev_requirement' => false,
-        ),
-        'maximebf/debugbar' => array(
-            'pretty_version' => 'v1.18.2',
-            'version' => '1.18.2.0',
-            'reference' => '17dcf3f6ed112bb85a37cf13538fd8de49f5c274',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../maximebf/debugbar',
-            'aliases' => array(),
-            'dev_requirement' => true,
         ),
         'mcamara/laravel-localization' => array(
             'pretty_version' => 'v1.7.0',
