@@ -89,10 +89,11 @@ class FrontendController extends Controller
             ->homeArticles()
             ->get();
 
-        $todayVisitor = totalVisitor(Period::days(1));
-        $sixMonths = totalVisitor(Period::months(6));
-        $yesterDay = totalVisitor(Period::create(Carbon::yesterday(), Carbon::yesterday()));
-        $online = totalVisitor(Period::create(Carbon::now(), Carbon::now()));
+        // Get visitor statistics
+        $todayVisitors = totalVisitor(Period::days(1));
+        $sixMonthsVisitors = totalVisitor(Period::months(6));
+        $yesterdayVisitors = totalVisitor(Period::create(Carbon::yesterday(), Carbon::yesterday()));
+        $onlineVisitors = totalVisitor(Period::create(Carbon::now(), Carbon::now()));
 
         return view('frontend/article/detail', compact(
             'articleDetail',
@@ -100,10 +101,10 @@ class FrontendController extends Controller
             'leftMenus',
             'leftArticlesDetail',
             'leftMenuCategory',
-            'todayVisitor',
-            'sixMonths',
-            'yesterDay',
-            'online'
+            'todayVisitors',
+            'sixMonthsVisitors',
+            'yesterdayVisitors',
+            'onlineVisitors'
         ));
     }
 }
