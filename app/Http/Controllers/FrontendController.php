@@ -24,39 +24,24 @@ class FrontendController extends Controller
     public function index()
     {
         $locale = App::getLocale();
+
         // Check if the articles data is already cached
-        if (Cache::has('articles_data_' . $locale)) {
-            $articles = Cache::get('articles_data_' . $locale);
-        } else {
-            $slugs = ['under-slider-articles', 'left-articles', 'right-articles', 'banners'];
-
-            $articles = Article::whereHas('category', function ($query) use ($slugs) {
-                $query->whereIn('slug', $slugs);
-            })
-                ->with('category')
-                ->get()
-                ->groupBy(function ($article) {
-                    return $article->category->slug;
-                });
-
-            // Cache the articles data forever
-            Cache::forever('articles_data_' . $locale, $articles);
-        }
+        $articles = Article::whereHas('category', function ($query) use ($locale) {
+            $query->whereIn('slug', ['under-slider-articles', 'left-articles', 'right-articles', 'banners']);
+        })
+            ->with('category')
+            ->get()
+            ->groupBy(function ($article) {
+                return $article->category->slug;
+            });
 
         // Check if the events data is already cached
-        if (Cache::has('events_data_' . $locale)) {
-            $events = Cache::get('events_data_' . $locale);
-        } else {
-            $events = Article::byArticleSlug('news-and-events')
-                ->orderBy('order', 'ASC')
-                ->take(4)
-                ->active()
-                ->orderBy('created_at', 'DESC')
-                ->paginate(6);
-
-            // Cache the events data forever
-            Cache::forever('events_data_' . $locale, $events);
-        }
+        $events = Article::byArticleSlug('news-and-events')
+            ->orderBy('order', 'ASC')
+            ->take(4)
+            ->active()
+            ->orderBy('created_at', 'DESC')
+            ->paginate(6);
 
         // Retrieve the specific article categories from the cached data
         $sliders = $articles['under-slider-articles'] ?? collect();
@@ -83,6 +68,8 @@ class FrontendController extends Controller
             'onlineVisitors'
         ));
     }
+
+
 
     public function articleDetail($slug)
     {
