@@ -28,7 +28,7 @@
                 <li>
                     <a href="#">@lang('app.all_visitor')
                         <span class="ts-pink-bg">{{ $sixMonths ?? 0 }}
-                            {{ trans_choice('app.visitor', $yesterDay ?? 0) }}</span>
+                            {{ trans_choice('app.visitor', $sixMonths ?? 0) }}</span>
                     </a>
                 </li>
             </ul>
