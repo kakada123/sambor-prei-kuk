@@ -14,6 +14,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Str;
 use App\Models\Language;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -121,6 +122,8 @@ class ArticleController extends Controller
                     }
                 }
             });
+
+            $this->clearArticleCaches();
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -233,6 +236,8 @@ class ArticleController extends Controller
                     }
                 }
             });
+
+            $this->clearArticleCaches();
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -250,6 +255,8 @@ class ArticleController extends Controller
         $article->deleted_by = Auth::user()->id;
         $article->save();
         $article->delete();
+
+        $this->clearArticleCaches();
         return redirect()->route('article.index');
     }
     public function uploadImage(Request $request)
@@ -290,5 +297,17 @@ class ArticleController extends Controller
         return response()->json([
             'articles' => $selecteArticles
         ], 200);
+    }
+
+    private function clearArticleCaches()
+    {
+        $langs = langs();
+        foreach ($langs as $lang) {
+            $cacheKey = 'articles_data' . $lang->locale;
+            Cache::forget($cacheKey);
+
+            $cacheKey = 'events_data_' . $lang->locale;
+            Cache::forget($cacheKey);
+        }
     }
 }
