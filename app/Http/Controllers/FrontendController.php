@@ -102,16 +102,12 @@ class FrontendController extends Controller
 
         // Get visitor statistics
         $todayVisitors = totalVisitor(Period::days(1));
-<<<<<<< HEAD
         // Assuming you started tracking from January 1, 2010
         $startDate = Carbon::createFromDate(2010, 1, 1);
         // Set end date as today
         $endDate = Carbon::today();
         $sixMonthsVisitors =
             totalVisitor(Period::create($startDate, $endDate));
-=======
-        $sixMonthsVisitors = totalVisitor(Period::months(6));
->>>>>>> 7f2a4f0206a956790412a04a33507749210dfd68
         $yesterdayVisitors = totalVisitor(Period::create(Carbon::yesterday(), Carbon::yesterday()));
         $onlineVisitors = totalVisitor(Period::create(Carbon::now(), Carbon::now()));
 
