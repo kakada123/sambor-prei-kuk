@@ -5,61 +5,37 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Menu;
+use App\Models\Visitor;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Cache;
 use Spatie\Analytics\Period;
 
 class FrontendController extends Controller
 {
     /**
      * Homepage
-     * @return var 
-     * $underSliders, 
-     * $leftArticles
-     * $rightArticles
-     * $newsAndEvents
+     *
+     * @return \Illuminate\View\View
      */
     public function index()
     {
         $locale = App::getLocale();
 
-        // Check if the articles data is already cached
-        $articles = Article::whereHas('category', function ($query) use ($locale) {
-            $query->whereIn('slug', ['under-slider-articles', 'left-articles', 'right-articles', 'banners']);
-        })
-            ->with('category')
-            ->get()
-            ->groupBy(function ($article) {
-                return $article->category->slug;
-            });
+        $articleSlugs = ['under-slider-articles', 'left-articles', 'right-articles', 'banners'];
+        $articles = $this->getArticlesGroupedByCategory($locale, $articleSlugs);
 
-        // Check if the events data is already cached
-        $events = Article::byArticleSlug('news-and-events')
-            ->orderBy('order', 'ASC')
-            ->take(4)
-            ->active()
-            ->orderBy('created_at', 'DESC')
-            ->paginate(6);
+        $events = $this->getEvents();
 
-        // Retrieve the specific article categories from the cached data
+        // Retrieve the specific article categories
         $sliders = $articles['under-slider-articles'] ?? collect();
         $leftArticles = $articles['left-articles'] ?? collect();
         $rightArticles = $articles['right-articles'] ?? collect();
         $banners = $articles['banners'] ?? collect();
 
-
-        // Get visitor statistics
-        $todayVisitors = totalVisitor(Period::days(1));
-        // Assuming you started tracking from January 1, 2010
-        $startDate = Carbon::createFromDate(2010, 1, 1);
-        // Set end date as today
-        $endDate = Carbon::today();
-        $sixMonthsVisitors =
-            totalVisitor(Period::create($startDate, $endDate));
-        $yesterdayVisitors = totalVisitor(Period::create(Carbon::yesterday(), Carbon::yesterday()));
-        $onlineVisitors = totalVisitor(Period::create(Carbon::now(), Carbon::now()));
+        $todayVisitors = $this->visitorsToday();
+        $allTimeVisitors = $this->allTimeVisitors();
+        $yesterdayVisitors = $this->visitorsYesterday();
+        $onlineVisitors = $this->onlineVisitors();
 
         return view('frontend/index', compact(
             'sliders',
@@ -68,13 +44,11 @@ class FrontendController extends Controller
             'events',
             'banners',
             'todayVisitors',
-            'sixMonthsVisitors',
+            'allTimeVisitors',
             'yesterdayVisitors',
             'onlineVisitors'
         ));
     }
-
-
 
     public function articleDetail($slug)
     {
@@ -83,33 +57,16 @@ class FrontendController extends Controller
             ->active()
             ->firstOrFail();
 
-        $relatedArticles = Article::with('category')
-            ->byArticleSlug($articleDetail->category->slug ?? "")
-            ->active()
-            ->orderBy('created_at', 'DESC')
-            ->whereNotIn('id', [$articleDetail->id ?? 0])
-            ->paginate(12);
+        $relatedArticles = $this->getRelatedArticles($articleDetail);
 
         $leftMenuCategory = Category::bySlug('structure-of-sambor-prei-kuk-national-authority')->firstOrFail();
+        $leftMenus = Menu::byType('left-menu')->orderBy('id', 'ASC')->get();
+        $leftArticlesDetail = Article::byArticleSlug('left-articles-details')->homeArticles()->get();
 
-        $leftMenus = Menu::byType('left-menu')
-            ->orderBy('id', 'ASC')
-            ->get();
-
-        $leftArticlesDetail = Article::byArticleSlug('left-articles-details')
-            ->homeArticles()
-            ->get();
-
-        // Get visitor statistics
-        $todayVisitors = totalVisitor(Period::days(1));
-        // Assuming you started tracking from January 1, 2010
-        $startDate = Carbon::createFromDate(2010, 1, 1);
-        // Set end date as today
-        $endDate = Carbon::today();
-        $sixMonthsVisitors =
-            totalVisitor(Period::create($startDate, $endDate));
-        $yesterdayVisitors = totalVisitor(Period::create(Carbon::yesterday(), Carbon::yesterday()));
-        $onlineVisitors = totalVisitor(Period::create(Carbon::now(), Carbon::now()));
+        $todayVisitors = $this->visitorsToday();
+        $allTimeVisitors = $this->allTimeVisitors();
+        $yesterdayVisitors = $this->visitorsYesterday();
+        $onlineVisitors = $this->onlineVisitors();
 
         return view('frontend/article/detail', compact(
             'articleDetail',
@@ -118,9 +75,68 @@ class FrontendController extends Controller
             'leftArticlesDetail',
             'leftMenuCategory',
             'todayVisitors',
-            'sixMonthsVisitors',
+            'allTimeVisitors',
             'yesterdayVisitors',
             'onlineVisitors'
         ));
+    }
+
+    private function getArticlesGroupedByCategory($locale, $slugs)
+    {
+        return Article::whereHas('category', function ($query) use ($locale, $slugs) {
+            $query->whereIn('slug', $slugs);
+        })->with('category')->get()->groupBy('category.slug');
+    }
+
+    private function getEvents()
+    {
+        return Article::byArticleSlug('news-and-events')
+            ->orderBy('order', 'ASC')
+            ->take(4)
+            ->active()
+            ->orderBy('created_at', 'DESC')
+            ->paginate(6);
+    }
+
+    private function getRelatedArticles($articleDetail)
+    {
+        return Article::with('category')
+            ->byArticleSlug($articleDetail->category->slug ?? "")
+            ->active()
+            ->orderBy('created_at', 'DESC')
+            ->whereNotIn('id', [$articleDetail->id ?? 0])
+            ->paginate(12);
+    }
+
+    private function getVisitorStatisticsForPeriod($months)
+    {
+        $startDate = Carbon::today()->subMonths($months);
+        $endDate = Carbon::today();
+
+        return Visitor::whereBetween('last_visit', [$startDate, $endDate])->count();
+    }
+
+    public function onlineVisitors()
+    {
+        $onlineVisitors = Visitor::where('last_visit', '>=', now()->subMinutes(5))->count();
+        return $onlineVisitors;
+    }
+
+    public function visitorsToday()
+    {
+        $visitorsToday = Visitor::whereDate('last_visit', now())->count();
+        return $visitorsToday;
+    }
+
+    public function visitorsYesterday()
+    {
+        $visitorsYesterday = Visitor::whereDate('last_visit', now()->subDay())->count();
+        return $visitorsYesterday;
+    }
+
+    public function allTimeVisitors()
+    {
+        $allTimeVisitors = Visitor::count();
+        return $allTimeVisitors + Visitor::OLD_DATA;
     }
 }

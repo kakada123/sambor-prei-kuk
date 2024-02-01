@@ -7,6 +7,7 @@ use App\Models\Menu;
 use Analytics as GoogleAnalytics;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
+use Spatie\Analytics\Period;
 
 if (!function_exists('langs')) {
     function langs()
@@ -142,14 +143,14 @@ if (!function_exists('isActiveMenu')) {
 }
 
 if (!function_exists('totalVisitor')) {
-    function totalVisitor($period)
+    function totalVisitor(Period $period)
     {
         $analyticsData = GoogleAnalytics::performQuery(
             $period,
             'ga:sessions',
             [
                 'metrics' => 'ga:sessions, ga:pageviews',
-                'dimensions' => 'ga:yearMonth'
+                'dimensions' => 'ga:date'
             ]
         );
 
