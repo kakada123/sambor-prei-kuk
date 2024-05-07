@@ -12,5 +12,5 @@ class Visitor extends Model
     protected $fillable = ['ip', 'last_visit'];
     public $timestamps = false;
 
-    const OLD_DATA = 371;
+    const OLD_DATA = 871;
 }
